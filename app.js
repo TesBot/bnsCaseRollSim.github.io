@@ -23,7 +23,7 @@ const state = {
   cases: [],
   selectedCategoryId: "",
   selectedCaseId: "",
-  inventory: loadInventory()
+  inventory: new Map() // 改用 Map 存储：key = "name_type", value = { name, type, rarity, image, totalQuantity }
 };
 
 const elements = {
@@ -44,6 +44,7 @@ const elements = {
 };
 
 async function init() {
+  loadInventory();
   await loadCaseData();
   initSelection();
   bindEvents();
@@ -53,18 +54,45 @@ async function init() {
 function loadInventory() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) return;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (Array.isArray(parsed)) {
+      // 兼容旧数据格式（数组），转换为 Map
+      parsed.forEach((item) => {
+        const key = `${item.name}_${item.type || ""}`;
+        if (state.inventory.has(key)) {
+          const existing = state.inventory.get(key);
+          existing.totalQuantity += item.quantityAwarded ?? item.totalQuantity ?? 1;
+        } else {
+          state.inventory.set(key, {
+            name: item.name,
+            type: item.type || "",
+            rarity: item.rarity,
+            image: item.image,
+            totalQuantity: item.quantityAwarded ?? item.totalQuantity ?? 1
+          });
+        }
+      });
+    } else if (typeof parsed === "object") {
+      // 新格式（对象），直接转换为 Map
+      Object.entries(parsed).forEach(([key, value]) => {
+        state.inventory.set(key, value);
+      });
+    }
   } catch (err) {
     console.warn("读取库存失败，已重置。", err);
-    return [];
+    state.inventory = new Map();
   }
 }
 
 function saveInventory() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.inventory));
+    // 转换为普通对象存储，更紧凑
+    const obj = {};
+    state.inventory.forEach((value, key) => {
+      obj[key] = value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
     return true;
   } catch (err) {
     console.warn("库存存储失败，可能已达到浏览器存储上限。", err);
@@ -74,7 +102,6 @@ function saveInventory() {
 
 function isStorageFull() {
   try {
-    // 尝试写入一个测试数据来检测是否还有空间
     const testKey = "_storage_test_";
     localStorage.setItem(testKey, "test");
     localStorage.removeItem(testKey);
@@ -82,6 +109,14 @@ function isStorageFull() {
   } catch (err) {
     return true;
   }
+}
+
+function getInventoryTotalCount() {
+  let total = 0;
+  state.inventory.forEach((item) => {
+    total += item.totalQuantity;
+  });
+  return total;
 }
 
 async function loadCaseData() {
@@ -340,13 +375,40 @@ function handleOpenCase() {
     });
   }
 
-  state.inventory = [...results, ...state.inventory];
+  // 添加到库存（合并存储）
+  results.forEach((item) => {
+    const key = `${item.name}_${item.type || ""}`;
+    const quantity = item.quantityAwarded ?? 1;
+    if (state.inventory.has(key)) {
+      state.inventory.get(key).totalQuantity += quantity;
+    } else {
+      state.inventory.set(key, {
+        name: item.name,
+        type: item.type || "",
+        rarity: item.rarity,
+        image: item.image,
+        totalQuantity: quantity
+      });
+    }
+  });
+
   const saved = saveInventory();
 
-  // 如果保存失败，提示用户
+  // 如果保存失败，提示用户并回滚
   if (!saved) {
     elements.inventoryFullError.classList.remove("hidden");
-    state.inventory = state.inventory.slice(results.length); // 回滚
+    // 回滚：减去刚才添加的数量
+    results.forEach((item) => {
+      const key = `${item.name}_${item.type || ""}`;
+      const quantity = item.quantityAwarded ?? 1;
+      if (state.inventory.has(key)) {
+        const existing = state.inventory.get(key);
+        existing.totalQuantity -= quantity;
+        if (existing.totalQuantity <= 0) {
+          state.inventory.delete(key);
+        }
+      }
+    });
     return;
   }
 
@@ -387,7 +449,7 @@ function renderLatestResults(results) {
 function renderInventory() {
   elements.inventoryList.innerHTML = "";
 
-  if (!state.inventory.length) {
+  if (!state.inventory.size) {
     elements.inventoryCount.className = "text-sm text-slate-400";
     elements.inventoryCount.textContent = "总计 0 种，0 件";
     elements.inventoryList.innerHTML =
@@ -395,29 +457,13 @@ function renderInventory() {
     return;
   }
 
-  // 合并相同物品（仅按名称+类型分组，不同分组的同名物品也合并）
-  const mergedMap = new Map();
-  state.inventory.forEach((item) => {
-    const key = `${item.name}_${item.type || ""}`;
-    if (mergedMap.has(key)) {
-      const existing = mergedMap.get(key);
-      existing.count += 1;
-      existing.totalQuantity += item.quantityAwarded ?? 1;
-    } else {
-      mergedMap.set(key, {
-        ...item,
-        count: 1,
-        totalQuantity: item.quantityAwarded ?? 1
-      });
-    }
-  });
-
-  const mergedItems = Array.from(mergedMap.values());
+  const items = Array.from(state.inventory.values());
+  const totalCount = getInventoryTotalCount();
 
   elements.inventoryCount.className = "text-sm text-slate-400";
-  elements.inventoryCount.textContent = `总计 ${mergedItems.length} 种，${state.inventory.length} 件`;
+  elements.inventoryCount.textContent = `总计 ${items.length} 种，${totalCount} 件`;
 
-  mergedItems.slice(0, 120).forEach((item) => {
+  items.slice(0, 120).forEach((item) => {
     const card = createItemCard(item, true, true);
     elements.inventoryList.appendChild(card);
   });
@@ -456,7 +502,7 @@ function createItemCard(item, showCount = false, isInventory = false) {
 }
 
 function handleClearInventory() {
-  state.inventory = [];
+  state.inventory = new Map();
   saveInventory();
   elements.inventoryFullError.classList.add("hidden");
   renderLatestResults([]);
