@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>剑灵游戏开箱模拟器</title>
+    <meta
+      name="description"
+      content="剑灵游戏开箱模拟器，仅学习交流，无商业用途。"
+    />
+
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                900: "#05070d",
+                800: "#0b1020",
+                700: "#111a33",
+                500: "#2060ff",
+                400: "#2d8cff"
+              }
+            },
+            boxShadow: {
+              glow: "0 0 0 1px rgba(46, 139, 255, 0.35), 0 0 18px rgba(46, 139, 255, 0.5)"
+            }
+          }
+        }
+      };
+    </script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body class="bg-brand-900 text-slate-100 min-h-screen">
+    <div class="page-bg"></div>
+
+    <!-- 顶部导航 -->
+    <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-brand-900/85 backdrop-blur">
+      <nav class="mx-auto flex h-16 w-[95%] max-w-7xl items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="logo-glow flex h-10 w-10 items-center justify-center rounded-lg bg-brand-700">
+            <i class="fa-solid fa-dice-d20 text-brand-400"></i>
+          </div>
+          <div>
+            <p class="text-sm text-slate-400">Blade & Soul</p>
+            <h1 class="text-base font-bold tracking-wide">剑灵开箱模拟器</h1>
+          </div>
+        </div>
+        <ul class="hidden gap-6 text-sm text-slate-300 md:flex">
+          <li><a class="nav-link" href="#inventory">我的库存</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="home" class="mx-auto w-[95%] max-w-7xl py-6 md:py-8">
+      <section class="grid gap-6 lg:grid-cols-12">
+        <!-- 左侧：箱子选择 -->
+        <aside class="card-panel lg:col-span-3">
+          <h2 class="mb-4 text-lg font-bold">
+            <i class="fa-solid fa-box-open mr-2 text-brand-400"></i>箱子选择
+          </h2>
+          <div class="space-y-3">
+            <label>
+              <span class="mb-1 block text-sm text-slate-300">宝箱类别</span>
+              <select
+                id="categorySelect"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm outline-none transition focus:border-brand-400"
+              ></select>
+            </label>
+            <label>
+              <span class="mb-1 block text-sm text-slate-300">选择宝箱</span>
+              <select
+                id="caseSelect"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm outline-none transition focus:border-brand-400"
+              ></select>
+            </label>
+          </div>
+          <div id="caseList" class="mt-3 space-y-2"></div>
+        </aside>
+
+        <!-- 中间：开箱操作与结果 -->
+        <section class="card-panel lg:col-span-5">
+          <h2 class="mb-4 text-lg font-bold">
+            <i class="fa-solid fa-gem mr-2 text-brand-400"></i>开箱操作
+          </h2>
+          <p id="selectedCaseDesc" class="mb-3 text-sm text-slate-400"></p>
+
+          <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <label class="sm:col-span-1">
+              <span class="mb-1 block text-sm text-slate-300">开箱次数</span>
+              <input
+                id="openCount"
+                type="number"
+                min="1"
+                max="1000"
+                value="1"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 outline-none transition focus:border-brand-400"
+              />
+            </label>
+            <div class="sm:col-span-2 flex items-end gap-3">
+              <button id="openBtn" class="btn-primary w-full sm:w-auto">
+                <i class="fa-solid fa-bolt mr-2"></i>立即开箱
+              </button>
+              <button id="clearInventoryBtn" class="btn-secondary w-full sm:w-auto">
+                <i class="fa-solid fa-trash mr-2"></i>清空库存
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <h3 class="mb-2 text-sm text-slate-400">本次开箱结果</h3>
+            <div id="latestResults" class="result-grid"></div>
+          </div>
+        </section>
+
+        <!-- 右侧：概率说明 -->
+        <aside class="card-panel lg:col-span-4">
+          <h2 class="mb-2 text-lg font-bold">
+            <i class="fa-solid fa-chart-pie mr-2 text-brand-400"></i>概率说明
+          </h2>
+          <p id="ratesCaseName" class="mb-3 text-xs text-slate-400"></p>
+          <div id="rates" class="space-y-2 text-sm"></div>
+        </aside>
+      </section>
+
+      <!-- 库存 -->
+      <section id="inventory" class="card-panel mt-6">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <h2 class="text-lg font-bold">
+            <i class="fa-solid fa-backpack mr-2 text-brand-400"></i>我的库存
+          </h2>
+          <span id="inventoryCount" class="text-sm text-slate-400">总计 0 件</span>
+        </div>
+        <div id="inventoryList" class="result-grid"></div>
+      </section>
+    </main>
+
+    <footer class="mt-8 border-t border-slate-800/80 bg-brand-900/80">
+      <div class="mx-auto w-[95%] max-w-7xl py-5 text-center text-xs text-slate-400">
+        <p>© 2026 剑灵开箱模拟器 - 仅用于前端学习与交流，无商业用途。</p>
+        <p class="mt-1">
+          本页面为练习项目，不涉及实际交易，不代表任何官方平台，若涉及素材请替换为自有资源。
+        </p>
+      </div>
+    </footer>
+
+    <script src="./data/cases-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
