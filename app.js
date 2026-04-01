@@ -32,6 +32,8 @@ const elements = {
   caseList: document.getElementById("caseList"),
   selectedCaseDesc: document.getElementById("selectedCaseDesc"),
   openCount: document.getElementById("openCount"),
+  openCountError: document.getElementById("openCountError"),
+  inventoryFullError: document.getElementById("inventoryFullError"),
   openBtn: document.getElementById("openBtn"),
   clearInventoryBtn: document.getElementById("clearInventoryBtn"),
   latestResults: document.getElementById("latestResults"),
@@ -61,7 +63,25 @@ function loadInventory() {
 }
 
 function saveInventory() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.inventory));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.inventory));
+    return true;
+  } catch (err) {
+    console.warn("库存存储失败，可能已达到浏览器存储上限。", err);
+    return false;
+  }
+}
+
+function isStorageFull() {
+  try {
+    // 尝试写入一个测试数据来检测是否还有空间
+    const testKey = "_storage_test_";
+    localStorage.setItem(testKey, "test");
+    localStorage.removeItem(testKey);
+    return false;
+  } catch (err) {
+    return true;
+  }
 }
 
 async function loadCaseData() {
@@ -94,6 +114,11 @@ function bindEvents() {
   elements.caseSelect.addEventListener("change", () => {
     state.selectedCaseId = elements.caseSelect.value;
     renderAll();
+  });
+
+  elements.openCount.addEventListener("input", () => {
+    elements.openCountError.classList.add("hidden");
+    elements.inventoryFullError.classList.add("hidden");
   });
 
   elements.openBtn.addEventListener("click", handleOpenCase);
@@ -287,6 +312,19 @@ function handleOpenCase() {
   const selected = getSelectedCase();
   if (!selected) return;
   const count = Number(elements.openCount.value);
+
+  // 验证输入是否超过最大值
+  if (count > 1000) {
+    elements.openCountError.classList.remove("hidden");
+    return;
+  }
+
+  // 验证存储是否已满
+  if (isStorageFull()) {
+    elements.inventoryFullError.classList.remove("hidden");
+    return;
+  }
+
   const openTimes = Number.isFinite(count) && count > 0 ? Math.min(1000, count) : 1;
   const groups = getCaseGroups(selected);
   if (!groups.length) return;
@@ -303,7 +341,15 @@ function handleOpenCase() {
   }
 
   state.inventory = [...results, ...state.inventory];
-  saveInventory();
+  const saved = saveInventory();
+
+  // 如果保存失败，提示用户
+  if (!saved) {
+    elements.inventoryFullError.classList.remove("hidden");
+    state.inventory = state.inventory.slice(results.length); // 回滚
+    return;
+  }
+
   renderLatestResults(results);
   renderInventory();
   elements.openBtn.classList.add("open-pulse");
@@ -342,7 +388,8 @@ function renderInventory() {
   elements.inventoryList.innerHTML = "";
 
   if (!state.inventory.length) {
-    elements.inventoryCount.textContent = "总计 0 件";
+    elements.inventoryCount.className = "text-sm text-slate-400";
+    elements.inventoryCount.textContent = "总计 0 种，0 件";
     elements.inventoryList.innerHTML =
       '<p class="text-sm text-slate-400">库存为空，快去开箱试试手气吧。</p>';
     return;
@@ -366,6 +413,8 @@ function renderInventory() {
   });
 
   const mergedItems = Array.from(mergedMap.values());
+
+  elements.inventoryCount.className = "text-sm text-slate-400";
   elements.inventoryCount.textContent = `总计 ${mergedItems.length} 种，${state.inventory.length} 件`;
 
   mergedItems.slice(0, 120).forEach((item) => {
@@ -407,10 +456,9 @@ function createItemCard(item, showCount = false, isInventory = false) {
 }
 
 function handleClearInventory() {
-  const confirmClear = window.confirm("确定要清空库存吗？此操作不可恢复。");
-  if (!confirmClear) return;
   state.inventory = [];
   saveInventory();
+  elements.inventoryFullError.classList.add("hidden");
   renderLatestResults([]);
   renderInventory();
 }
