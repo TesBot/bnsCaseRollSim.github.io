@@ -108,5 +108,71 @@ window.DUNGEON_CASES = [
         ]
       }
     ]
+  },
+  {
+    id: "dungeon_relic_03",
+    category: "dungeon",
+    name: "剑仙的试炼礼物箱",
+    desc: "每日挑战、周挑战",
+    image: "assets/jianxiandeshilianliwuxiang/jianxiandeshilianliwuxiang.png",
+    itemGroups: [
+      {
+        code: "奖励",
+        name: " ",
+        rule: "确定获得",
+        drawMode: "all",
+        allowEmpty: false,
+        items: [
+          { id: "A1", name: "黯淡的天下四杰修炼之证", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 100, image: "assets/jianxiandeshilianliwuxiang/A1.png" },
+          { id: "A2", name: "特制野猪肉饺子汤", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 100, image: "assets/jianxiandeshilianliwuxiang/A2.png" }
+        ]
+      },
+      {
+        code: "奖励",
+        name: " ",
+        rule: "概率获得",
+        drawMode: "one",
+        allowEmpty: false,
+        items: [
+          { id: "B1", name: "仙幻岛外形币", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 80, image: "assets/jianxiandeshilianliwuxiang/B1.png" },
+          { id: "B2", name: "仙幻神功牌碎片", type: "奖励道具", quantity: "1", rarity: "epic", rate: 20, image: "assets/jianxiandeshilianliwuxiang/B2.png" }
+        ]
+      },
+      {
+        code: "奖励",
+        name: " ",
+        rule: "概率获得",
+        drawMode: "one",
+        allowEmpty: false,
+        items: [
+          { id: "C1", name: "[仙幻]冰库成长护符", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 80, image: "assets/jianxiandeshilianliwuxiang/C1.png" },
+          { id: "C2", name: "耀眼仙幻岛图画箱", type: "奖励道具", quantity: "1", rarity: "rare", rate: 10, image: "assets/jianxiandeshilianliwuxiang/C2.png" },
+          { id: "C3", name: "耀眼的印章箱", type: "奖励道具", quantity: "1", rarity: "rare", rate: 9, image: "assets/jianxiandeshilianliwuxiang/C3.png" },
+          { id: "C4", name: "耀眼的特殊印章箱", type: "奖励道具", quantity: "1", rarity: "rare", rate: 0.6, image: "assets/jianxiandeshilianliwuxiang/C4.png" },
+          { id: "C5", name: "炽热的印章箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.3, image: "assets/jianxiandeshilianliwuxiang/C5.png" },
+          { id: "C6", name: "炽热的特殊印章箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.1, image: "assets/jianxiandeshilianliwuxiang/C6.png" }
+        ]
+      },
+      {
+        code: "稀有奖励",
+        name: " ",
+        rule: "极小概率获得",
+        drawMode: "one",
+        allowEmpty: true,
+        items: [
+          { id: "D1", name: "秦义绝", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/jianxiandeshilianliwuxiang/D1.png" },
+          { id: "D2", name: "力王 洪玄公", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/jianxiandeshilianliwuxiang/D2.png" },
+          { id: "D3", name: "黑风巫祝 孙蟠", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.005, image: "assets/jianxiandeshilianliwuxiang/D3.png" },
+          { id: "D4", name: "风帝国皇帝 王婉茹", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.005, image: "assets/jianxiandeshilianliwuxiang/D4.png" },
+          { id: "D5", name: "孽缘魔轮 烛魔王", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.003, image: "assets/jianxiandeshilianliwuxiang/D5.png" },
+          { id: "D6", name: "黑龙教主 震天魔王", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.003, image: "assets/jianxiandeshilianliwuxiang/D6.png" },
+          { id: "D7", name: "时空乱流 茱莉叶", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.001, image: "assets/jianxiandeshilianliwuxiang/D7.png" },
+          { id: "D8", name: "暗影君主 拉胡", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.001, image: "assets/jianxiandeshilianliwuxiang/D8.png" },
+          { id: "D9", name: "灿烂的印章箱", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.03, image: "assets/jianxiandeshilianliwuxiang/D9.png"},
+          { id: "D10", name: "灿烂的组合印章箱", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/jianxiandeshilianliwuxiang/D10.png" },
+          { id: "D11", name: "武神极武功秘典箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.0005, image: "assets/jianxiandeshilianliwuxiang/D11.png" }
+        ]
+      }
+    ]
   }
 ];
