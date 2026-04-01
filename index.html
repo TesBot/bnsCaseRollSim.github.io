@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>剑灵游戏开箱模拟器</title>
+    <title>剑灵怀旧服开箱模拟器</title>
     <meta
       name="description"
       content="剑灵游戏开箱模拟器，仅学习交流，无商业用途。"
@@ -99,6 +99,15 @@
           </h2>
           <p id="selectedCaseDesc" class="mb-3 text-sm text-slate-400"></p>
 
+          <!-- 特效开关 -->
+          <div class="mb-3 flex items-center gap-2">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="effectToggle" checked class="sr-only peer">
+              <div class="toggle-switch peer-checked:bg-brand-500 peer-focus:ring-2 peer-focus:ring-brand-400/50"></div>
+              <span class="text-sm text-slate-300">开箱特效</span>
+            </label>
+          </div>
+
           <div class="mt-4 grid gap-3 sm:grid-cols-3">
             <label class="sm:col-span-1">
               <span class="mb-1 block text-sm text-slate-300">开箱次数</span>
@@ -165,6 +174,33 @@
       </div>
     </footer>
 
+    <!-- 开箱特效浮窗 -->
+    <div id="effectModal" class="effect-modal hidden">
+      <div class="effect-overlay"></div>
+      <div class="effect-content card-panel">
+        <h3 id="effectCaseName" class="text-lg font-bold text-center mb-2"></h3>
+        <div class="effect-animation-container">
+          <img id="effectCaseImage" class="effect-case-image" src="" alt="">
+          <div id="cloudEffect" class="cloud-effect"></div>
+        </div>
+        <p id="effectCaseDesc" class="text-sm text-slate-400 text-center mt-2"></p>
+        <div class="effect-counter mt-3">
+          <span class="text-slate-300">剩余: </span>
+          <span id="effectRemaining" class="text-2xl font-bold text-brand-400">0</span>
+          <span class="text-slate-400"> / </span>
+          <span id="effectTotal" class="text-slate-400">0</span>
+        </div>
+        <!-- 实时获得物品展示 -->
+        <div class="effect-items-container mt-3">
+          <p class="text-xs text-slate-400 mb-1">本次获得:</p>
+          <div id="effectItemsList" class="effect-items-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./data/mall-cases.js"></script>
+    <script src="./data/dungeon-cases.js"></script>
+    <script src="./data/normal-cases.js"></script>
     <script src="./data/cases-data.js"></script>
     <script src="./app.js"></script>
   </body>

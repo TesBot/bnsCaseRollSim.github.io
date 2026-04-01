@@ -26,6 +26,129 @@ const state = {
   inventory: new Map() // 改用 Map 存储：key = "name_type", value = { name, type, rarity, image, totalQuantity }
 };
 
+// 动画相关状态
+let isAnimating = false;
+
+// 根据开箱数量获取动画延迟时间（智能速度调整）
+function getAnimationDelay(count) {
+  if (count <= 10) return 200;
+  if (count <= 30) return 150;
+  if (count <= 100) return 100;
+  if (count <= 500) return 80;
+  return 67;
+}
+
+// Promise 版本的 setTimeout
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// 显示特效浮窗
+function showEffectModal(caseData, totalCount) {
+  if (!elements.effectModal) {
+    console.error("特效浮窗元素未找到");
+    return;
+  }
+  elements.effectCaseName.textContent = caseData.name;
+  elements.effectCaseImage.src = caseData.image || "assets/cases/default.jpg";
+  elements.effectCaseDesc.textContent = caseData.desc || "";
+  elements.effectRemaining.textContent = totalCount;
+  elements.effectTotal.textContent = totalCount;
+  elements.effectItemsList.innerHTML = "";
+  elements.effectModal.classList.remove("hidden");
+}
+
+// 关闭特效浮窗
+function hideEffectModal() {
+  elements.effectModal.classList.add("hidden");
+  elements.effectCaseImage.classList.remove("shaking");
+  elements.cloudEffect.classList.remove("active");
+}
+
+// 播放单次开箱动画
+function playOpenAnimation() {
+  // 箱子抖动
+  elements.effectCaseImage.classList.remove("shaking");
+  // 强制重绘以重新触发动画
+  void elements.effectCaseImage.offsetWidth;
+  elements.effectCaseImage.classList.add("shaking");
+
+  // 云朵飘出
+  elements.cloudEffect.classList.remove("active");
+  void elements.cloudEffect.offsetWidth;
+  elements.cloudEffect.classList.add("active");
+
+  // 动画结束后移除类名
+  setTimeout(() => {
+    elements.effectCaseImage.classList.remove("shaking");
+    elements.cloudEffect.classList.remove("active");
+  }, 300);
+}
+
+// 添加物品到实时展示列表
+function addEffectItem(item) {
+  const rarityClass = item.rarity || "common";
+  const itemEl = document.createElement("div");
+  itemEl.className = `effect-item-mini ${rarityClass}`;
+  itemEl.innerHTML = `<img src="${item.image || "assets/items/default.jpg"}" alt="${item.name}">`;
+
+  elements.effectItemsList.appendChild(itemEl);
+
+  // 保持最多显示 20 个物品，超出则移除最旧的
+  const items = elements.effectItemsList.children;
+  if (items.length > 20) {
+    elements.effectItemsList.removeChild(items[0]);
+  }
+
+  // 滚动到最新物品
+  elements.effectItemsList.scrollTop = elements.effectItemsList.scrollHeight;
+}
+
+// 更新剩余数量
+function updateRemainingCount(count) {
+  elements.effectRemaining.textContent = count;
+}
+
+// 禁用交互
+function disableInteraction() {
+  isAnimating = true;
+  elements.openBtn.disabled = true;
+  elements.clearInventoryBtn.disabled = true;
+  elements.categorySelect.disabled = true;
+  elements.caseSelect.disabled = true;
+  elements.openCount.disabled = true;
+  elements.openBtn.classList.add("opacity-50", "cursor-not-allowed");
+  elements.clearInventoryBtn.classList.add("opacity-50", "cursor-not-allowed");
+}
+
+// 启用交互
+function enableInteraction() {
+  isAnimating = false;
+  elements.openBtn.disabled = false;
+  elements.clearInventoryBtn.disabled = false;
+  elements.categorySelect.disabled = false;
+  elements.caseSelect.disabled = false;
+  elements.openCount.disabled = false;
+  elements.openBtn.classList.remove("opacity-50", "cursor-not-allowed");
+  elements.clearInventoryBtn.classList.remove("opacity-50", "cursor-not-allowed");
+}
+
+// 单次开箱计算
+function openSingleCase(caseData) {
+  const groups = getCaseGroups(caseData);
+  if (!groups.length) return [];
+
+  const results = [];
+  groups.forEach((group) => {
+    const picked = pickItemsFromGroup(group).map((reward) => ({
+      ...reward,
+      caseName: caseData.name
+    }));
+    results.push(...picked);
+  });
+  return results;
+}
+
 const elements = {
   categorySelect: document.getElementById("categorySelect"),
   caseSelect: document.getElementById("caseSelect"),
@@ -40,15 +163,37 @@ const elements = {
   rates: document.getElementById("rates"),
   ratesCaseName: document.getElementById("ratesCaseName"),
   inventoryList: document.getElementById("inventoryList"),
-  inventoryCount: document.getElementById("inventoryCount")
+  inventoryCount: document.getElementById("inventoryCount"),
+  // 特效相关元素
+  effectToggle: document.getElementById("effectToggle"),
+  effectModal: document.getElementById("effectModal"),
+  effectCaseName: document.getElementById("effectCaseName"),
+  effectCaseImage: document.getElementById("effectCaseImage"),
+  effectCaseDesc: document.getElementById("effectCaseDesc"),
+  effectRemaining: document.getElementById("effectRemaining"),
+  effectTotal: document.getElementById("effectTotal"),
+  effectItemsList: document.getElementById("effectItemsList"),
+  cloudEffect: document.getElementById("cloudEffect")
 };
 
 async function init() {
+  // 检查关键元素是否获取成功
+  console.log("初始化开始...");
+  console.log("openBtn:", elements.openBtn);
+  console.log("effectToggle:", elements.effectToggle);
+  console.log("effectModal:", elements.effectModal);
+
+  if (!elements.openBtn) {
+    console.error("开箱按钮未找到！");
+    return;
+  }
+
   loadInventory();
   await loadCaseData();
   initSelection();
   bindEvents();
   renderAll();
+  console.log("初始化完成");
 }
 
 function loadInventory() {
@@ -363,9 +508,15 @@ function getCategoryName(categoryId) {
   return category ? category.name : categoryId;
 }
 
-function handleOpenCase() {
+async function handleOpenCase() {
+  // 如果正在动画中，不允许再次点击
+  if (isAnimating) return;
+
   const selected = getSelectedCase();
-  if (!selected) return;
+  if (!selected) {
+    console.warn("未选择箱子");
+    return;
+  }
   const count = Number(elements.openCount.value);
 
   // 验证输入是否超过最大值
@@ -381,21 +532,108 @@ function handleOpenCase() {
   }
 
   const openTimes = Number.isFinite(count) && count > 0 ? Math.min(1000, count) : 1;
-  const groups = getCaseGroups(selected);
+
+  // 检查是否开启特效
+  const effectEnabled = elements.effectToggle && elements.effectToggle.checked;
+
+  console.log("开箱触发，特效开关:", effectEnabled, "开箱数量:", openTimes);
+
+  try {
+    if (effectEnabled) {
+      // 带动画的开箱流程
+      await runEffectOpening(selected, openTimes);
+    } else {
+      // 原有即时开箱逻辑
+      runInstantOpening(selected, openTimes);
+    }
+  } catch (err) {
+    console.error("开箱出错:", err);
+    hideEffectModal();
+    enableInteraction();
+  }
+}
+
+// 带动画的开箱流程
+async function runEffectOpening(caseData, count) {
+  const delay = getAnimationDelay(count);
+  const results = [];
+
+  showEffectModal(caseData, count);
+  disableInteraction();
+
+  for (let i = count; i > 0; i--) {
+    // 计算单次开箱结果
+    const singleResult = openSingleCase(caseData);
+    results.push(...singleResult);
+
+    // 更新 UI
+    updateRemainingCount(i - 1);
+    singleResult.forEach(item => addEffectItem(item));
+
+    // 播放动画
+    playOpenAnimation();
+
+    // 等待动画完成
+    await sleep(delay);
+  }
+
+  // 存入库存
+  addToInventory(results);
+  const saved = saveInventory();
+
+  // 关闭浮窗并恢复交互
+  hideEffectModal();
+  enableInteraction();
+
+  // 如果保存失败，回滚库存
+  if (!saved) {
+    removeFromInventory(results);
+    elements.inventoryFullError.classList.remove("hidden");
+    return;
+  }
+
+  // 渲染结果
+  renderLatestResults(results);
+  renderInventory();
+
+  // 按钮动画效果
+  elements.openBtn.classList.add("open-pulse");
+  window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
+}
+
+// 即时开箱流程（原有逻辑）
+function runInstantOpening(caseData, count) {
+  const groups = getCaseGroups(caseData);
   if (!groups.length) return;
 
   const results = [];
-  for (let i = 0; i < openTimes; i += 1) {
+  for (let i = 0; i < count; i += 1) {
     groups.forEach((group) => {
       const picked = pickItemsFromGroup(group).map((reward) => ({
         ...reward,
-        caseName: selected.name
+        caseName: caseData.name
       }));
       results.push(...picked);
     });
   }
 
-  // 添加到库存（合并存储）
+  addToInventory(results);
+  const saved = saveInventory();
+
+  if (!saved) {
+    elements.inventoryFullError.classList.remove("hidden");
+    removeFromInventory(results);
+    return;
+  }
+
+  renderLatestResults(results);
+  renderInventory();
+  elements.openBtn.classList.add("open-pulse");
+  window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
+}
+
+// 添加结果到库存
+function addToInventory(results) {
   results.forEach((item) => {
     const key = `${item.name}_${item.type || ""}`;
     const quantity = item.quantityAwarded ?? 1;
@@ -411,31 +649,21 @@ function handleOpenCase() {
       });
     }
   });
+}
 
-  const saved = saveInventory();
-
-  // 如果保存失败，提示用户并回滚
-  if (!saved) {
-    elements.inventoryFullError.classList.remove("hidden");
-    // 回滚：减去刚才添加的数量
-    results.forEach((item) => {
-      const key = `${item.name}_${item.type || ""}`;
-      const quantity = item.quantityAwarded ?? 1;
-      if (state.inventory.has(key)) {
-        const existing = state.inventory.get(key);
-        existing.totalQuantity -= quantity;
-        if (existing.totalQuantity <= 0) {
-          state.inventory.delete(key);
-        }
+// 从库存移除（用于保存失败时回滚）
+function removeFromInventory(results) {
+  results.forEach((item) => {
+    const key = `${item.name}_${item.type || ""}`;
+    const quantity = item.quantityAwarded ?? 1;
+    if (state.inventory.has(key)) {
+      const existing = state.inventory.get(key);
+      existing.totalQuantity -= quantity;
+      if (existing.totalQuantity <= 0) {
+        state.inventory.delete(key);
       }
-    });
-    return;
-  }
-
-  renderLatestResults(results);
-  renderInventory();
-  elements.openBtn.classList.add("open-pulse");
-  window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
+    }
+  });
 }
 
 function renderLatestResults(results) {
