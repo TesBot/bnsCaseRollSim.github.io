@@ -1,4 +1,22 @@
 ## 剑灵怀旧服开箱模拟器 ##
-纯静态网页；
-访问网页：https://tesbot.github.io/bnsCaseRollSim.github.io/
+### 直接访问网页：https://tesbot.github.io/bnsCaseRollSim.github.io/ ### 
+
+## 开箱模拟器 — 帮你模拟剑灵开箱子，避免氪金上头 ##
+
+### 功能 ###
+
+选择物品 — 添加商城购买类宝箱、副本掉落类物品、普通箱子物品等（持续添加中...）
+模拟开箱 — 自定义开箱子个数，在开箱区展示获得物品
+概率展示 — 箱子类概率来自剑灵怀旧服官方游戏
+我的库存 — 本地保存历史开箱获得物品记录
+
+### 技术栈 ###
+纯前端，无框架依赖
+HTML + CSS + JavaScript
+响应式设计，适配移动端
+
+### 部署 ###
+将项目文件放到任意静态服务器即可运行
+
+### 示意图 ### 
 <img width="1977" height="1223" alt="image" src="https://github.com/user-attachments/assets/bd983fb2-29f0-4be2-9491-ef7e6582f991" />
