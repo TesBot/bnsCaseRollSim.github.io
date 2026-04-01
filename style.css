@@ -67,6 +67,7 @@ body {
   text-align: left;
   padding: 10px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .case-item:hover {
@@ -313,4 +314,23 @@ body {
 
 .rate-name {
   flex: 1;
+}
+
+#caseList {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+#caseList::-webkit-scrollbar {
+  width: 4px;
+}
+
+#caseList::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+}
+
+#caseList::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
 }

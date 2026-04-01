@@ -197,20 +197,40 @@ function renderCaseSelect() {
 
 function renderCaseList() {
   elements.caseList.innerHTML = "";
-  const selected = getSelectedCase();
-  if (!selected) return;
-  elements.caseList.innerHTML = `
-    <div class="case-item active">
+  const currentCases = getCasesByCategory(state.selectedCategoryId);
+  if (!currentCases.length) return;
+
+  const maxDisplay = 10;
+  const displayCases = currentCases.slice(0, maxDisplay);
+  const hasMore = currentCases.length > maxDisplay;
+
+  displayCases.forEach((box) => {
+    const isActive = box.id === state.selectedCaseId;
+    const item = document.createElement("div");
+    item.className = `case-item ${isActive ? "active" : ""}`;
+    item.dataset.caseId = box.id;
+    item.innerHTML = `
       <div class="case-mini-layout">
-        <img class="case-mini-thumb" src="${selected.image || "assets/cases/default.jpg"}" alt="${selected.name}">
+        <img class="case-mini-thumb" src="${box.image || "assets/cases/default.jpg"}" alt="${box.name}">
         <div>
-          <div class="font-semibold">${selected.name}</div>
-          <div class="mt-1 text-xs text-slate-400">${selected.desc}</div>
-          <div class="mt-1 text-xs text-slate-500">分类：${getCategoryName(selected.category)}</div>
+          <div class="font-semibold">${box.name}</div>
+          <div class="mt-1 text-xs text-slate-400">${box.desc}</div>
         </div>
       </div>
-    </div>
-  `;
+    `;
+    item.addEventListener("click", () => {
+      state.selectedCaseId = box.id;
+      renderAll();
+    });
+    elements.caseList.appendChild(item);
+  });
+
+  if (hasMore) {
+    const hint = document.createElement("div");
+    hint.className = "mt-2 text-xs text-slate-500 text-center";
+    hint.textContent = `当前分类共 ${currentCases.length} 个箱子，下拉框可查看更多`;
+    elements.caseList.appendChild(hint);
+  }
 }
 
 function updateCurrentCaseInfo() {
