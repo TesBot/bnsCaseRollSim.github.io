@@ -316,8 +316,13 @@ body {
   flex: 1;
 }
 
+/* 箱子列表区域 - 自适应高度以与右侧概率面板对齐 */
 #caseList {
-  max-height: 340px;
+  /* 移除固定高度限制，让内容自然撑开 */
+  max-height: none;
+  /* 设置一个最小高度保证基本展示 */
+  min-height: 200px;
+  /* 当内容过多时仍可滚动 */
   overflow-y: auto;
 }
 

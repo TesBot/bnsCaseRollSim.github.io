@@ -320,6 +320,51 @@ function renderAll() {
   updateCurrentCaseInfo();
   renderRatePanel();
   renderInventory();
+  // 渲染完成后同步左侧箱子列表与右侧概率面板的高度
+  syncCaseListHeight();
+}
+
+/**
+ * 同步箱子列表高度与右侧概率面板高度
+ * 让三个区域底部对齐，箱子可以显示更多
+ */
+function syncCaseListHeight() {
+  // 获取三个区域的父容器
+  const gridContainer = document.querySelector('section.grid');
+  if (!gridContainer) return;
+
+  // 获取三个 card-panel
+  const panels = gridContainer.querySelectorAll('.card-panel');
+  if (panels.length < 3) return;
+
+  const leftPanel = panels[0];   // 左侧箱子选择
+  const rightPanel = panels[2];  // 右侧概率说明
+
+  // 先让内容自然渲染，获取右侧面板内容高度
+  // 使用 requestAnimationFrame 确保 DOM 已更新
+  requestAnimationFrame(() => {
+    // 获取右侧面板的整体高度
+    const rightPanelHeight = rightPanel.offsetHeight;
+
+    // 计算左侧面板可用高度：右侧面板高度 - 左侧标题和下拉框的高度
+    const leftHeader = leftPanel.querySelector('h2');
+    const leftSelects = leftPanel.querySelector('.space-y-3');
+
+    // 左侧固定部分高度：标题 + 下拉框区域 + margin
+    const fixedHeight = (leftHeader?.offsetHeight || 0) +
+                        (leftSelects?.offsetHeight || 0) +
+                        24; // margin 和 padding 的估算值
+
+    // 计算箱子列表可用高度
+    const availableHeight = rightPanelHeight - fixedHeight;
+
+    // 设置最小高度为 300px（约显示4个箱子），最大不超过可用高度
+    // 如果可用高度较大，可以显示更多箱子
+    const minHeight = 300;
+    const maxHeight = Math.max(minHeight, availableHeight);
+
+    elements.caseList.style.maxHeight = `${maxHeight}px`;
+  });
 }
 
 function renderCategorySelect() {
