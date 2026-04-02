@@ -100,10 +100,10 @@ window.NORMAL_CASES = [
           { id: "D1", name: "剑灵兜帽", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D1.png" },
           { id: "D2", name: "剑灵兜帽头饰", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D2.png" },
           { id: "D3", name: "灿烂的真言珠箱", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.1, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D3.png" },
-          { id: "D4", name: "风帝国皇帝 王婉茹", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D4.png" },
-          { id: "D5", name: "黑风巫祝 孙蟠", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D5.png" },
-          { id: "D6", name: "秦义绝", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D6.png" },
-          { id: "D7", name: "力王 洪玄公", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D7.png" },
+          { id: "D4", name: "风帝国皇帝 王婉茹", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D4.png" },
+          { id: "D5", name: "黑风巫祝 孙蟠", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D5.png" },
+          { id: "D6", name: "秦义绝", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D6.png" },
+          { id: "D7", name: "力王 洪玄公", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D7.png" },
           { id: "D8", name: "[仙幻]武神塔极武功秘典箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.0001, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D8.png" },
           { id: "D9", name: "[仙幻]极限挑战极武功秘典箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.0001, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D9.png" }
         ]
