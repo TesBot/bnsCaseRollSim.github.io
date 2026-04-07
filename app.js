@@ -817,8 +817,9 @@ function createItemCard(item, showCount = false, isInventory = false) {
   } else {
     // 开箱结果：右上角显示数量徽章
     let quantityDisplay = "";
-    if (showCount && item.count > 1) {
-      quantityDisplay = `<span class="item-count-badge">x${item.count}</span>`;
+    const displayQuantity = showCount ? item.totalQuantity : (item.quantityAwarded ?? item.quantityText ?? 1);
+    if (showCount && displayQuantity > 1) {
+      quantityDisplay = `<span class="item-count-badge">x${displayQuantity}</span>`;
       card.classList.add("item-card-merged");
     }
     card.innerHTML = `
@@ -826,7 +827,7 @@ function createItemCard(item, showCount = false, isInventory = false) {
       <div class="text-xs text-slate-400">${item.caseName || "未知宝箱"}</div>
       <img class="item-thumb ${rarityMeta ? rarityMeta.borderClass : ""}" src="${item.image || "assets/items/default.jpg"}" alt="${item.name}">
       <h4 class="mt-2 font-semibold ${rarityMeta ? rarityMeta.className : ""}">${item.name}</h4>
-      <div class="mt-1 text-xs text-slate-400">${item.type || "未知类型"} · x${showCount ? item.totalQuantity : (item.quantityAwarded ?? item.quantityText ?? 1)}</div>
+      <div class="mt-1 text-xs text-slate-400">${item.type || "未知类型"} · x${displayQuantity}</div>
       <div class="mt-1 text-xs text-slate-500">${item.groupCode ? `${item.groupCode}组` : ""} ${item.groupRule || ""}</div>
       <div class="mt-1 text-xs text-slate-500">${item.createdAt || ""}</div>
     `;
