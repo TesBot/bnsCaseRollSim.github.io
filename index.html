@@ -6,7 +6,7 @@
     <title>剑灵怀旧服开箱模拟器</title>
     <meta
       name="description"
-      content="剑灵游戏开箱模拟器，仅学习交流，无商业用途。"
+      content="剑灵怀旧服游戏开箱模拟器，仅学习交流，无商业用途。"
     />
 
     <!-- 网页标签图标 -->
@@ -57,7 +57,7 @@
           </div>
           <div>
             <p class="text-sm text-slate-400">Blade & Soul</p>
-            <h1 class="text-base font-bold tracking-wide">剑灵开箱模拟器</h1>
+            <h1 class="text-base font-bold tracking-wide">剑灵怀旧服开箱模拟器</h1>
           </div>
         </div>
         <ul class="hidden gap-6 text-sm text-slate-300 md:flex">
@@ -180,8 +180,14 @@
       <div class="effect-content card-panel">
         <h3 id="effectCaseName" class="text-lg font-bold text-center mb-2"></h3>
         <div class="effect-animation-container">
+          <div id="sparkParticles" class="spark-particles"></div>
+          <div id="openRingEffect" class="open-ring-effect"></div>
           <img id="effectCaseImage" class="effect-case-image" src="" alt="">
-          <div id="cloudEffect" class="cloud-effect"></div>
+          <div id="cloudEffect" class="cloud-effect">
+            <div class="cloud-center"></div>
+            <div class="cloud-extra left"></div>
+            <div class="cloud-extra right"></div>
+          </div>
         </div>
         <p id="effectCaseDesc" class="text-sm text-slate-400 text-center mt-2"></p>
         <div class="effect-counter mt-3">
@@ -194,6 +200,12 @@
         <div class="effect-items-container mt-3">
           <p class="text-xs text-slate-400 mb-1">本次获得:</p>
           <div id="effectItemsList" class="effect-items-list"></div>
+        </div>
+        <!-- 确定按钮 -->
+        <div id="effectConfirmBtnContainer" class="mt-4 hidden">
+          <button id="effectConfirmBtn" class="btn-primary w-full">
+            <i class="fa-solid fa-check mr-2"></i>确定
+          </button>
         </div>
       </div>
     </div>

@@ -428,71 +428,435 @@ input:focus + .toggle-switch {
   border-radius: 8px;
   border: 2px solid rgba(59, 130, 246, 0.5);
   background: rgba(2, 6, 23, 0.5);
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  position: relative;
+  z-index: 2;
 }
 
-.effect-case-image.shaking {
-  animation: boxShake 0.15s ease;
-}
-
-/* 云朵动画 */
-.cloud-effect {
+/* 箱子发光底座效果 */
+.effect-case-image::before {
+  content: "";
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 40px;
-  opacity: 0;
+  inset: -10px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 1.5s ease-in-out infinite;
   pointer-events: none;
 }
 
-.cloud-effect.active {
-  animation: cloudPuff 0.3s ease-out;
+.effect-case-image.shaking {
+  animation: boxShakeEnhanced 0.2s ease;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3);
+  border-color: rgba(96, 165, 250, 0.9);
 }
 
-.cloud-effect::before,
-.cloud-effect::after {
+/* 箱子周围火花粒子效果 - 增强版 */
+.spark-particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px;
+  height: 160px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spark-particles.active {
+  animation: sparkBurst 0.4s ease-out;
+}
+
+.spark-particles::before {
   content: "";
   position: absolute;
-  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9), rgba(200, 220, 255, 0.6));
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background:
+    radial-gradient(4px 4px at 20% 30%, #fbbf24 100%, transparent),
+    radial-gradient(6px 6px at 80% 20%, #60a5fa 100%, transparent),
+    radial-gradient(5px 5px at 40% 80%, #a855f7 100%, transparent),
+    radial-gradient(4px 4px at 70% 70%, #22c55e 100%, transparent),
+    radial-gradient(6px 6px at 10% 60%, #ef4444 100%, transparent),
+    radial-gradient(5px 5px at 90% 50%, #f97316 100%, transparent),
+    radial-gradient(3px 3px at 50% 10%, #fff 100%, transparent),
+    radial-gradient(4px 4px at 30% 50%, #fbbf24 100%, transparent),
+    radial-gradient(5px 5px at 60% 40%, #60a5fa 100%, transparent),
+    radial-gradient(6px 6px at 85% 85%, #a855f7 100%, transparent);
+  opacity: 0;
 }
 
-.cloud-effect::before {
-  width: 30px;
-  height: 24px;
-  top: 8px;
-  left: 8px;
+.spark-particles.active::before {
+  animation: sparkExplode 0.4s ease-out forwards;
 }
 
-.cloud-effect::after {
-  width: 24px;
-  height: 20px;
-  top: 12px;
-  left: 26px;
-}
-
-@keyframes cloudPuff {
+@keyframes sparkExplode {
   0% {
-    transform: translateX(-50%) scale(0.3) translateY(20px);
-    opacity: 0;
+    opacity: 1;
+    transform: scale(0.3);
   }
-  40% {
-    transform: translateX(-50%) scale(1.2) translateY(-5px);
+  50% {
     opacity: 1;
   }
   100% {
-    transform: translateX(-50%) scale(1.5) translateY(-20px);
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+/* 光环扩散效果 - 多层增强 */
+.open-ring-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  border: 4px solid rgba(59, 130, 246, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+
+.open-ring-effect::before,
+.open-ring-effect::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.open-ring-effect::before {
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(251, 191, 36, 0.6);
+}
+
+.open-ring-effect::after {
+  width: 140px;
+  height: 140px;
+  border: 2px solid rgba(96, 165, 250, 0.4);
+}
+
+.open-ring-effect.active {
+  animation: ringExpandMulti 0.45s ease-out;
+}
+
+.open-ring-effect.active::before {
+  animation: ringInnerExpand 0.35s ease-out;
+}
+
+.open-ring-effect.active::after {
+  animation: ringOuterExpand 0.5s ease-out;
+}
+
+@keyframes ringExpandMulti {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+    border-width: 4px;
+    border-color: rgba(59, 130, 246, 0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.5);
+    border-width: 1px;
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes ringInnerExpand {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3);
+    border-color: rgba(251, 191, 36, 0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+@keyframes ringOuterExpand {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes boxShakeEnhanced {
+  0%, 100% { transform: rotate(0deg) scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+  10% { transform: rotate(-6deg) scale(1.1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.7); }
+  20% { transform: rotate(6deg) scale(1.15); box-shadow: 0 0 35px rgba(59, 130, 246, 0.8), 0 0 50px rgba(251, 191, 36, 0.4); }
+  30% { transform: rotate(-4deg) scale(1.1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+  40% { transform: rotate(4deg) scale(1.08); }
+  50% { transform: rotate(-2deg) scale(1.05); }
+  60% { transform: rotate(2deg) scale(1.03); }
+  70% { transform: rotate(-1deg) scale(1.02); }
+  80% { transform: rotate(1deg) scale(1.01); }
+}
+
+/* 云朵动画 - 多层增强版 */
+.cloud-effect {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 80px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.cloud-effect.active {
+  animation: cloudPuffEnhanced 0.4s ease-out;
+}
+
+/* 主云朵 - 更大更明显 */
+.cloud-effect::before,
+.cloud-effect::after,
+.cloud-effect .cloud-layer {
+  content: "";
+  position: absolute;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.98), rgba(200, 220, 255, 0.85), rgba(150, 180, 255, 0.5));
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+.cloud-effect::before {
+  width: 55px;
+  height: 45px;
+  top: 18px;
+  left: 20px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+.cloud-effect::after {
+  width: 45px;
+  height: 38px;
+  top: 28px;
+  left: 55px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+}
+
+/* 中心爆发光点 - 更亮更大 */
+.cloud-effect .cloud-center {
+  position: absolute;
+  top: 30px;
+  left: 35px;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #fff 30%, rgba(251, 191, 36, 0.9) 60%, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 4;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(251, 191, 36, 0.6);
+}
+
+.cloud-effect.active .cloud-center {
+  animation: centerFlashBright 0.3s ease-out;
+}
+
+/* 额外小云朵 */
+.cloud-effect .cloud-extra {
+  position: absolute;
+  width: 30px;
+  height: 25px;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9), transparent);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.cloud-effect .cloud-extra.left {
+  top: 35px;
+  left: 5px;
+}
+
+.cloud-effect .cloud-extra.right {
+  top: 38px;
+  right: 5px;
+}
+
+.cloud-effect.active .cloud-extra {
+  animation: cloudExtraPuff 0.35s ease-out forwards;
+}
+
+@keyframes cloudExtraPuff {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5) translateY(-15px);
+  }
+}
+
+@keyframes centerFlashBright {
+  0% {
+    opacity: 1;
+    transform: scale(0.3);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(2.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
+@keyframes cloudPuffEnhanced {
+  0% {
+    transform: translateX(-50%) scale(0.15) translateY(35px);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(-50%) scale(0.6) translateY(10px);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateX(-50%) scale(1) translateY(-5px);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translateX(-50%) scale(1.4) translateY(-20px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(-50%) scale(1.8) translateY(-35px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-50%) scale(2.2) translateY(-50px);
     opacity: 0;
   }
 }
 
-@keyframes boxShake {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-4deg) scale(1.05); }
-  50% { transform: rotate(0deg) scale(1.08); }
-  75% { transform: rotate(4deg) scale(1.05); }
+/* 物品出现动画增强 */
+.effect-item-mini {
+  width: 48px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  background: rgba(15, 23, 42, 0.6);
+  text-align: center;
+  animation: itemPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.effect-item-mini img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* 稀有物品特效 */
+.effect-item-mini.legendary {
+  border-color: #d97706;
+  box-shadow: 0 0 12px rgba(217, 119, 6, 0.6), 0 0 24px rgba(217, 119, 6, 0.3);
+  animation: legendaryPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.effect-item-mini.legendary::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(217, 119, 6, 0.4);
+  border-radius: 8px;
+  animation: legendaryRing 1s ease-in-out infinite;
+}
+
+@keyframes legendaryRing {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.effect-item-mini.epic {
+  border-color: #7c3aed;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4), 0 0 16px rgba(124, 58, 237, 0.2);
+  animation: epicPopIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.effect-item-mini.rare {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
+}
+
+.effect-item-mini.uncommon {
+  border-color: #22c55e;
+  box-shadow: 0 0 4px rgba(34, 197, 94, 0.25);
+}
+
+@keyframes itemPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(15px) rotate(-10deg);
+  }
+  60% {
+    transform: scale(1.1) translateY(-3px) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes legendaryPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) translateY(20px) rotate(-15deg);
+    box-shadow: 0 0 30px rgba(217, 119, 6, 0.8), 0 0 60px rgba(217, 119, 6, 0.5);
+  }
+  50% {
+    transform: scale(1.3) translateY(-8px) rotate(5deg);
+    box-shadow: 0 0 20px rgba(217, 119, 6, 0.6), 0 0 40px rgba(217, 119, 6, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes epicPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(15px) rotate(-8deg);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+  }
+  50% {
+    transform: scale(1.15) translateY(-5px) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(0deg);
+  }
 }
 
 /* 计数器样式 */
@@ -532,45 +896,28 @@ input:focus + .toggle-switch {
   border-radius: 3px;
 }
 
-.effect-item-mini {
-  width: 48px;
-  padding: 4px;
-  border-radius: 6px;
-  border: 1px solid rgba(100, 116, 139, 0.4);
-  background: rgba(15, 23, 42, 0.6);
-  text-align: center;
-  animation: itemFadeIn 0.2s ease;
+/* 确定按钮容器 */
+#effectConfirmBtnContainer {
+  animation: fadeInUp 0.3s ease-out;
 }
 
-.effect-item-mini img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  border-radius: 4px;
+#effectConfirmBtn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-color: rgba(34, 197, 94, 0.7);
 }
 
-.effect-item-mini.legendary {
-  border-color: #d97706;
-  box-shadow: 0 0 8px rgba(217, 119, 6, 0.4);
+#effectConfirmBtn:hover {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+  transform: translateY(-2px);
 }
 
-.effect-item-mini.epic {
-  border-color: #7c3aed;
-  box-shadow: 0 0 6px rgba(124, 58, 237, 0.3);
-}
-
-.effect-item-mini.rare {
-  border-color: #2563eb;
-  box-shadow: 0 0 4px rgba(37, 99, 235, 0.25);
-}
-
-@keyframes itemFadeIn {
+@keyframes fadeInUp {
   0% {
     opacity: 0;
-    transform: scale(0.5) translateY(10px);
+    transform: translateY(10px);
   }
   100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }

@@ -28,6 +28,7 @@ const state = {
 
 // 动画相关状态
 let isAnimating = false;
+let pendingResults = []; // 等待确认的开箱结果
 
 // 根据开箱数量获取动画延迟时间（智能速度调整）
 function getAnimationDelay(count) {
@@ -35,7 +36,7 @@ function getAnimationDelay(count) {
   if (count <= 30) return 150;
   if (count <= 100) return 100;
   if (count <= 500) return 80;
-  return 67;
+  return 40; // 500以上大幅加速
 }
 
 // Promise 版本的 setTimeout
@@ -63,13 +64,14 @@ function hideEffectModal() {
   elements.effectModal.classList.add("hidden");
   elements.effectCaseImage.classList.remove("shaking");
   elements.cloudEffect.classList.remove("active");
+  if (elements.sparkParticles) elements.sparkParticles.classList.remove("active");
+  if (elements.openRingEffect) elements.openRingEffect.classList.remove("active");
 }
 
-// 播放单次开箱动画
+// 播放单次开箱动画（增强版）
 function playOpenAnimation() {
   // 箱子抖动
   elements.effectCaseImage.classList.remove("shaking");
-  // 强制重绘以重新触发动画
   void elements.effectCaseImage.offsetWidth;
   elements.effectCaseImage.classList.add("shaking");
 
@@ -78,11 +80,27 @@ function playOpenAnimation() {
   void elements.cloudEffect.offsetWidth;
   elements.cloudEffect.classList.add("active");
 
+  // 火花粒子效果
+  if (elements.sparkParticles) {
+    elements.sparkParticles.classList.remove("active");
+    void elements.sparkParticles.offsetWidth;
+    elements.sparkParticles.classList.add("active");
+  }
+
+  // 光环扩散效果
+  if (elements.openRingEffect) {
+    elements.openRingEffect.classList.remove("active");
+    void elements.openRingEffect.offsetWidth;
+    elements.openRingEffect.classList.add("active");
+  }
+
   // 动画结束后移除类名
   setTimeout(() => {
     elements.effectCaseImage.classList.remove("shaking");
     elements.cloudEffect.classList.remove("active");
-  }, 300);
+    if (elements.sparkParticles) elements.sparkParticles.classList.remove("active");
+    if (elements.openRingEffect) elements.openRingEffect.classList.remove("active");
+  }, 350);
 }
 
 // 添加物品到实时展示列表
@@ -173,7 +191,11 @@ const elements = {
   effectRemaining: document.getElementById("effectRemaining"),
   effectTotal: document.getElementById("effectTotal"),
   effectItemsList: document.getElementById("effectItemsList"),
-  cloudEffect: document.getElementById("cloudEffect")
+  cloudEffect: document.getElementById("cloudEffect"),
+  sparkParticles: document.getElementById("sparkParticles"),
+  openRingEffect: document.getElementById("openRingEffect"),
+  effectConfirmBtnContainer: document.getElementById("effectConfirmBtnContainer"),
+  effectConfirmBtn: document.getElementById("effectConfirmBtn")
 };
 
 async function init() {
@@ -303,6 +325,7 @@ function bindEvents() {
 
   elements.openBtn.addEventListener("click", handleOpenCase);
   elements.clearInventoryBtn.addEventListener("click", handleClearInventory);
+  elements.effectConfirmBtn.addEventListener("click", handleEffectConfirm);
 }
 
 function getSelectedCase() {
@@ -603,6 +626,9 @@ async function runEffectOpening(caseData, count) {
   const delay = getAnimationDelay(count);
   const results = [];
 
+  // 隐藏确定按钮
+  elements.effectConfirmBtnContainer.classList.add("hidden");
+
   showEffectModal(caseData, count);
   disableInteraction();
 
@@ -621,6 +647,20 @@ async function runEffectOpening(caseData, count) {
     // 等待动画完成
     await sleep(delay);
   }
+
+  // 存储待确认的结果
+  pendingResults = results;
+
+  // 显示确定按钮
+  elements.effectConfirmBtnContainer.classList.remove("hidden");
+}
+
+// 处理确定按钮点击
+function handleEffectConfirm() {
+  if (pendingResults.length === 0) return;
+
+  const results = pendingResults;
+  pendingResults = [];
 
   // 存入库存
   addToInventory(results);
