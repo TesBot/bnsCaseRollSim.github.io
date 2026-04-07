@@ -74,5 +74,58 @@ window.MALL_CASES = [
         ]
       }
     ]
+  },
+  {
+    id: "mall_weapon_02",
+    category: "mall",
+    name: "龙吟仙境吉运福签",
+    desc: "飞龙工商",
+    image: "assets/longyinxianjingjiyunfuqian/longyinxianjingjiyunfuqian.png",
+    itemGroups: [
+      {
+        code: "奖励",
+        name: " ",
+        rule: "可获得其中一种",
+        drawMode: "one",
+        allowEmpty: false,
+        items: [
+          { id: "A1", name: "松狮背包", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.85, image: "assets/longyinxianjingjiyunfuqian/A1.png" },
+          { id: "A2", name: "牛仔派对", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.85, image: "assets/longyinxianjingjiyunfuqian/A2.png" },
+          { id: "A3", name: "角・化蝶", type: "奖励道具", quantity: "1", rarity: "epic", rate: 2.25, image: "assets/longyinxianjingjiyunfuqian/A3.png" },
+          { id: "A4", name: "角・云逸", type: "奖励道具", quantity: "1", rarity: "epic", rate: 2.25, image: "assets/longyinxianjingjiyunfuqian/A4.png" },
+          { id: "A5", name: "艾兰妖翼", type: "奖励道具", quantity: "1", rarity: "epic", rate: 2.25, image: "assets/longyinxianjingjiyunfuqian/A5.png" },
+          { id: "A6", name: "天照玄冰翼", type: "奖励道具", quantity: "1", rarity: "epic", rate: 2.25, image: "assets/longyinxianjingjiyunfuqian/A6.png" },
+          { id: "A7", name: "雷影疾狼无极幻影剑", type: "奖励道具", quantity: "1", rarity: "legendary", rate:0.3, image: "assets/longyinxianjingjiyunfuqian/A7.png" },
+          { id: "A8", name: "雷影疾狼无极幻影拳套", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A8.png" },
+          { id: "A9", name: "雷影疾狼无极幻影法杖", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A9.png" },
+          { id: "A10", name: "雷影疾狼无极幻影彩绫", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A10.png" },
+          { id: "A11", name: "雷影疾狼无极幻影斧头", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A11.png" },
+          { id: "A12", name: "雷影疾狼无极幻影短刀", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A12.png" },
+          { id: "A13", name: "雷影疾狼无极幻影灵剑", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A13.png" },
+          { id: "A14", name: "雷影疾狼无极幻影佩刀", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A14.png" },
+          { id: "A15", name: "雷影疾狼无极幻影长枪", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.3, image: "assets/longyinxianjingjiyunfuqian/A15.png" },
+          { id: "A16", name: "酷黑浪潮", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 1.0, image: "assets/longyinxianjingjiyunfuqian/A16.png" },
+          { id: "A17", name: "酷黑爵士帽", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 3.0, image: "assets/longyinxianjingjiyunfuqian/A17.png" },
+          { id: "A18", name: "酷黑墨镜", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 5.0, image: "assets/longyinxianjingjiyunfuqian/A18.png" },
+          { id: "A19", name: "无尽深渊", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 1.0, image: "assets/longyinxianjingjiyunfuqian/A19.png" },
+          { id: "A20", name: "魔王的伪装", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 3.0, image: "assets/longyinxianjingjiyunfuqian/A20.png" },
+          { id: "A21", name: "混沌之翼", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 5.0, image: "assets/longyinxianjingjiyunfuqian/A21.png" },
+          { id: "A22", name: "墨灵香气幻影剑", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A22.png" },
+          { id: "A23", name: "墨灵香气幻影拳套", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A23.png" },
+          { id: "A24", name: "墨灵香气幻影彩绫", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A24.png" },
+          { id: "A25", name: "墨灵香气幻影法杖", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A25.png" },
+          { id: "A26", name: "墨灵香气幻影短刀", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A26.png" },
+          { id: "A27", name: "墨灵香气幻影斧头", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A27.png" },
+          { id: "A28", name: "墨灵香气幻影灵剑", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A28.png" },
+          { id: "A29", name: "墨灵香气幻影佩刀", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A29.png" },
+          { id: "A30", name: "墨灵香气幻影长枪", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.4, image: "assets/longyinxianjingjiyunfuqian/A30.png" },
+          { id: "A31", name: "赤香", type: "奖励道具", quantity: "1", rarity: "epic", rate: 10, image: "assets/longyinxianjingjiyunfuqian/A31.png" },
+          { id: "A32", name: "赤香帽", type: "奖励道具", quantity: "1", rarity: "epic", rate: 18, image: "assets/longyinxianjingjiyunfuqian/A32.png" },
+          { id: "A33", name: "运筹帷幄", type: "奖励道具", quantity: "1", rarity: "epic", rate: 10, image: "assets/longyinxianjingjiyunfuqian/A33.png" },
+          { id: "A34", name: "运筹帷幄装饰", type: "奖励道具", quantity: "1", rarity: "epic", rate: 18, image: "assets/longyinxianjingjiyunfuqian/A34.png" },
+
+        ]
+      }
+    ]
   }
 ];
