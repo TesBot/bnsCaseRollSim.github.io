@@ -2,6 +2,82 @@ window.MALL_CASES = [
   {
     id: "mall_weapon_01",
     category: "mall",
+    name: "神兽飞翼箱",
+    desc: "飞吧...入梦的时刻",
+    image: "assets/shenshoufeiyixiang/shenshoufeiyixiang.png",
+    itemGroups: [
+      {
+        code: "奖励",
+        name: " ",
+        rule: "确定获得",
+        drawMode: "all",
+        allowEmpty: false,
+        items: [
+          { id: "A1", name: "神兽在星空的一瞬", type: "奖励道具", quantity: "2~4", rarity: "epic", rate: 100, image: "assets/shenshoufeiyixiang/A1.png" }
+        ]
+      },
+      {
+        code: "奖励",
+        name: " ",
+        rule: "确定获得",
+        drawMode: "all",
+        allowEmpty: false,
+        items: [
+          { id: "B1", name: "青空的破碎幻梦", type: "奖励道具", quantity: "1", rarity: "epic", rate: 100, image: "assets/shenshoufeiyixiang/A2.png" }
+        ]
+      },
+      {
+        code: "奖励",
+        name: " ",
+        rule: "可获得其中一种",
+        drawMode: "one",
+        allowEmpty: false,
+        items: [
+          { id: "C1", name: "圣君堂高级复活符", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1.5, image: "assets/shenshoufeiyixiang/C1.png" },
+          { id: "C2", name: "圣君堂高级重生符", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.5, image: "assets/shenshoufeiyixiang/C2.png" },
+          { id: "C3", name: "应急修理工具", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 15, image: "assets/shenshoufeiyixiang/C3.png" },
+          { id: "C4", name: "仙幻吉祥", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 3, image: "assets/shenshoufeiyixiang/C4.png" },
+          { id: "C5", name: "仙幻烧酒", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 3, image: "assets/shenshoufeiyixiang/C5.png" },
+          { id: "C6", name: "仙幻觉醒妙药", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 3, image: "assets/shenshoufeiyixiang/C6.png" },
+          { id: "C7", name: "仙幻包子", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 3, image: "assets/shenshoufeiyixiang/C7.png" },
+          { id: "C8", name: "仙幻不屈妙药", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 3, image: "assets/shenshoufeiyixiang/C8.png" },
+          { id: "C9", name: "五色线", type: "奖励道具", quantity: "1", rarity: "epic", rate: 3, image: "assets/shenshoufeiyixiang/C9.png" },
+          { id: "C10", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "1", rarity: "epic", rate: 65, image: "assets/shenshoufeiyixiang/C10.png" }
+        ]
+      },
+      {
+        code: "奖励",
+        name: " ",
+        rule: "概率获得其中1种",
+        drawMode: "one",
+        allowEmpty: true,
+        items: [
+          { id: "D1", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "50", rarity: "epic", rate: 1, image: "assets/shenshoufeiyixiang/D1.png" },
+          { id: "D2", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "20", rarity: "epic", rate: 2.5, image: "assets/shenshoufeiyixiang/D2.png" },
+          { id: "D3", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "15", rarity: "epic", rate: 5.5, image: "assets/shenshoufeiyixiang/D3.png" },
+          { id: "D4", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "10", rarity: "epic", rate: 10, image: "assets/shenshoufeiyixiang/D4.png" },
+          { id: "D5", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "5", rarity: "epic", rate: 20, image: "assets/shenshoufeiyixiang/D5.png" },
+          { id: "D6", name: "神石最大获得数量限制扩展券 (100)", type: "奖励道具", quantity: "2", rarity: "epic", rate: 30.5, image: "assets/shenshoufeiyixiang/D6.png" },
+          { id: "D7", name: "神石最大获得数量限制扩展券 (10000)", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.1, image: "assets/shenshoufeiyixiang/D7.png" },
+          { id: "D8", name: "神石最大获得数量限制扩展券 (10000)", type: "奖励道具", quantity: "5", rarity: "epic", rate: 0.05, image: "assets/shenshoufeiyixiang/D8.png" },
+          { id: "D9", name: "仙幻岛外形币", type: "奖励道具", quantity: "1~20", rarity: "uncommon", rate: 15, image: "assets/shenshoufeiyixiang/D9.png" },
+          { id: "D10", name: "冰冻的飞鸟一梦箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/shenshoufeiyixiang/D10.png" },
+          { id: "D11", name: "冰冻的飞鸟之愿箱", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.01, image: "assets/shenshoufeiyixiang/D11.png" },
+          { id: "D12", name: "冰冻的角·幻灭箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.02, image: "assets/shenshoufeiyixiang/D12.png" },
+          { id: "D13", name: "冰冻的角·墨鸢箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.02, image: "assets/shenshoufeiyixiang/D13.png" },
+          { id: "D14", name: "幻炎之翼", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/shenshoufeiyixiang/D14.png" },
+          { id: "D15", name: "鸿运之翼", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.005, image: "assets/shenshoufeiyixiang/D15.png" },
+          { id: "D16", name: "龙吟仙境吉运福签", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.01, image: "assets/shenshoufeiyixiang/D16.png" },
+          { id: "D17", name: "龙吟玉", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.02, image: "assets/shenshoufeiyixiang/D17.png" },
+          { id: "D18", name: "龙吟玉", type: "奖励道具", quantity: "15", rarity: "epic", rate: 0.0002, image: "assets/shenshoufeiyixiang/D18.png" },
+          { id: "D19", name: "神兽宝物箱", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 0.05, image: "assets/shenshoufeiyixiang/D19.png" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "mall_weapon_02",
+    category: "mall",
     name: "神兽朋克箱",
     desc: "梦想终会燃尽...",
     image: "assets/shenshoupengkexiang/shenshoupengkexiang.png",
@@ -76,7 +152,7 @@ window.MALL_CASES = [
     ]
   },
   {
-    id: "mall_weapon_02",
+    id: "mall_weapon_03",
     category: "mall",
     name: "龙吟仙境吉运福签",
     desc: "飞龙工商",
