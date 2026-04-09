@@ -18,6 +18,9 @@ const rarityConfig = [
 
 const STORAGE_KEY = "bns_case_inventory_v1";
 
+// 极稀有物品概率阈值（百分比）
+const RARE_THRESHOLD = 0.05;
+
 const state = {
   categories: [],
   cases: [],
@@ -29,6 +32,7 @@ const state = {
 // 动画相关状态
 let isAnimating = false;
 let pendingResults = []; // 等待确认的开箱结果
+let pendingShowoffResults = null; // 等待炫耀弹窗确认的结果 { results, rareItems }
 
 // 根据开箱数量获取动画延迟时间（智能速度调整）
 function getAnimationDelay(count) {
@@ -167,6 +171,60 @@ function openSingleCase(caseData) {
   return results;
 }
 
+// 检测极稀有物品（概率 ≤ 0.01%）
+function findRareItems(results) {
+  return results.filter(item => Number(item.rate || 100) <= RARE_THRESHOLD);
+}
+
+// 显示炫耀弹窗
+function showShowoffModal(rareItems) {
+  if (!elements.showoffModal || !rareItems?.length) return;
+
+  elements.showoffItems.innerHTML = "";
+
+  rareItems.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "showoff-item-card";
+    const rateText = Number(item.rate || 0).toFixed(4);
+    card.innerHTML = `
+      <img class="showoff-item-image" src="${item.image || "assets/items/default.jpg"}" alt="${item.name}">
+      <div class="showoff-item-name">${item.name}</div>
+      <div class="showoff-item-rate">概率: ${rateText}%</div>
+    `;
+    elements.showoffItems.appendChild(card);
+  });
+
+  elements.showoffModal.classList.remove("hidden");
+}
+
+// 隐藏炫耀弹窗
+function hideShowoffModal() {
+  if (!elements.showoffModal) return;
+  elements.showoffModal.classList.add("hidden");
+  elements.showoffItems.innerHTML = "";
+}
+
+// 处理结果存入库存并渲染
+function processResults(results) {
+  addToInventory(results);
+  const saved = saveInventory();
+
+  if (!saved) {
+    removeFromInventory(results);
+    elements.inventoryFullError.classList.remove("hidden");
+    return false;
+  }
+
+  renderLatestResults(results);
+  renderInventory();
+
+  // 按钮动画效果
+  elements.openBtn.classList.add("open-pulse");
+  window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
+
+  return true;
+}
+
 const elements = {
   categorySelect: document.getElementById("categorySelect"),
   caseSelect: document.getElementById("caseSelect"),
@@ -195,7 +253,11 @@ const elements = {
   sparkParticles: document.getElementById("sparkParticles"),
   openRingEffect: document.getElementById("openRingEffect"),
   effectConfirmBtnContainer: document.getElementById("effectConfirmBtnContainer"),
-  effectConfirmBtn: document.getElementById("effectConfirmBtn")
+  effectConfirmBtn: document.getElementById("effectConfirmBtn"),
+  // 炫耀弹窗相关元素
+  showoffModal: document.getElementById("showoffModal"),
+  showoffItems: document.getElementById("showoffItems"),
+  showoffConfirmBtn: document.getElementById("showoffConfirmBtn")
 };
 
 async function init() {
@@ -326,6 +388,7 @@ function bindEvents() {
   elements.openBtn.addEventListener("click", handleOpenCase);
   elements.clearInventoryBtn.addEventListener("click", handleClearInventory);
   elements.effectConfirmBtn.addEventListener("click", handleEffectConfirm);
+  elements.showoffConfirmBtn.addEventListener("click", handleShowoffConfirm);
 }
 
 function getSelectedCase() {
@@ -662,28 +725,36 @@ function handleEffectConfirm() {
   const results = pendingResults;
   pendingResults = [];
 
-  // 存入库存
-  addToInventory(results);
-  const saved = saveInventory();
-
-  // 关闭浮窗并恢复交互
+  // 关闭浮窗
   hideEffectModal();
-  enableInteraction();
 
-  // 如果保存失败，回滚库存
-  if (!saved) {
-    removeFromInventory(results);
-    elements.inventoryFullError.classList.remove("hidden");
-    return;
+  // 检测是否有极稀有物品
+  const rareItems = findRareItems(results);
+
+  if (rareItems.length > 0) {
+    // 存储结果，等待炫耀弹窗确认后再处理
+    pendingShowoffResults = { results, rareItems };
+    showShowoffModal(rareItems);
+    // 不恢复交互，等待炫耀弹窗确认
+  } else {
+    // 直接处理结果
+    processResults(results);
+    enableInteraction();
   }
+}
 
-  // 渲染结果
-  renderLatestResults(results);
-  renderInventory();
+// 处理炫耀弹窗确认
+function handleShowoffConfirm() {
+  if (!pendingShowoffResults) return;
 
-  // 按钮动画效果
-  elements.openBtn.classList.add("open-pulse");
-  window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
+  const { results } = pendingShowoffResults;
+  pendingShowoffResults = null;
+
+  hideShowoffModal();
+
+  // 处理结果
+  processResults(results);
+  enableInteraction();
 }
 
 // 即时开箱流程（原有逻辑）
@@ -702,6 +773,18 @@ function runInstantOpening(caseData, count) {
     });
   }
 
+  // 检测是否有极稀有物品
+  const rareItems = findRareItems(results);
+
+  if (rareItems.length > 0) {
+    // 存储结果，显示炫耀弹窗
+    pendingShowoffResults = { results, rareItems };
+    disableInteraction();
+    showShowoffModal(rareItems);
+    return; // 等待确认后再存入库存
+  }
+
+  // 原有流程：直接存入库存
   addToInventory(results);
   const saved = saveInventory();
 
