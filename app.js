@@ -19,7 +19,7 @@ const rarityConfig = [
 const STORAGE_KEY = "bns_case_inventory_v1";
 
 // 极稀有物品概率阈值（百分比）
-const RARE_THRESHOLD = 0.01;
+const RARE_THRESHOLD = 0.04;
 
 const state = {
   categories: [],
