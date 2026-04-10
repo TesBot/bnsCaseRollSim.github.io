@@ -1,5 +1,6 @@
 ## 剑灵怀旧服开箱模拟器 ##
 ### 直接访问网页：https://tesbot.github.io/bnsCaseRollSim.github.io/ ### 
+### CloudFlare托管：https://bnscaserollsim.alexsjr.workers.dev/ ###
 
 ## 开箱模拟器 — 帮你模拟剑灵开箱子，避免氪金上头 ##
 
@@ -22,4 +23,13 @@ HTML + CSS + JavaScript
 将项目文件放到任意静态服务器即可运行
 
 ### 示意图 ### 
-<img width="1977" height="1223" alt="image" src="https://github.com/user-attachments/assets/bd983fb2-29f0-4be2-9491-ef7e6582f991" />
+<img width="2549" height="1403" alt="image" src="https://github.com/user-attachments/assets/b59f64de-6958-404a-b153-85340ab3d3b4" />
+
+## 更新日志
+
+### 2026-04-10
+**目标挑战功能**
+- 目标达成弹窗新增
+- 目标达成弹窗花费统计，显示总花费（开箱次数 × 箱子单价），金额支持千分位格式化
+**页面优化**
+- 页面布局优化
