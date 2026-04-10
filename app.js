@@ -17,6 +17,7 @@ const rarityConfig = [
 ];
 
 const STORAGE_KEY = "bns_case_inventory_v1";
+const TARGET_STORAGE_KEY = "bns_case_target_v1";
 
 // 极稀有物品概率阈值（百分比）
 const RARE_THRESHOLD = 0.04;
@@ -32,7 +33,8 @@ const state = {
 // 动画相关状态
 let isAnimating = false;
 let pendingResults = []; // 等待确认的开箱结果
-let pendingShowoffResults = null; // 等待炫耀弹窗确认的结果 { results, rareItems }
+let pendingOpenCount = 0; // 当前开箱次数
+let pendingShowoffResults = null; // 等待炫耀弹窗确认的结果 { results, rareItems, openCount }
 
 // 根据开箱数量获取动画延迟时间（智能速度调整）
 function getAnimationDelay(count) {
@@ -182,6 +184,19 @@ function showShowoffModal(rareItems) {
 
   elements.showoffItems.innerHTML = "";
 
+  // 欧皇降临特效：2个及以上极稀有物品
+  const isEuroEmperor = rareItems.length >= 2;
+
+  if (isEuroEmperor) {
+    elements.showoffTitle.textContent = "欧皇降临！";
+    elements.showoffTitle.classList.add("euro-emperor-title");
+    elements.showoffSubtitle.textContent = `一次获得 ${rareItems.length} 个极稀有物品，欧气爆棚！`;
+  } else {
+    elements.showoffTitle.textContent = "极稀有物品!";
+    elements.showoffTitle.classList.remove("euro-emperor-title");
+    elements.showoffSubtitle.textContent = "恭喜获得以下珍稀奖励";
+  }
+
   rareItems.forEach((item) => {
     const card = document.createElement("div");
     card.className = "showoff-item-card";
@@ -204,8 +219,48 @@ function hideShowoffModal() {
   elements.showoffItems.innerHTML = "";
 }
 
+// 生成分享卡片
+// 截图分享整个页面
+async function generateShareCard() {
+  // 先隐藏炫耀弹窗
+  const modalWasVisible = !elements.showoffModal?.classList.contains('hidden');
+  if (modalWasVisible) {
+    elements.showoffModal.classList.add('hidden');
+  }
+
+  // 等待DOM更新
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  try {
+    // 使用html2canvas截图整个页面
+    const canvas = await html2canvas(document.body, {
+      backgroundColor: '#05070d',
+      scale: 1,
+      useCORS: true,
+      logging: false
+    });
+
+    // 下载图片
+    const link = document.createElement('a');
+    link.download = `剑灵开箱分享_${new Date().getTime()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (error) {
+    console.error('截图失败:', error);
+    alert('截图失败，请尝试手动截图');
+  }
+
+  // 恢复炫耀弹窗
+  if (modalWasVisible) {
+    elements.showoffModal.classList.remove('hidden');
+  }
+}
+
 // 处理结果存入库存并渲染
-function processResults(results) {
+function processResults(results, openCount = 1) {
+  // 检查目标挑战
+  checkTargetHit(results, openCount);
+
   addToInventory(results);
   const saved = saveInventory();
 
@@ -223,6 +278,192 @@ function processResults(results) {
   window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
 
   return true;
+}
+
+// ========== 今日运气统计 ==========
+
+// ========== 目标挑战 ==========
+
+function loadTargetData() {
+  try {
+    const raw = localStorage.getItem(TARGET_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveTargetData(data) {
+  if (data) {
+    localStorage.setItem(TARGET_STORAGE_KEY, JSON.stringify(data));
+  } else {
+    localStorage.removeItem(TARGET_STORAGE_KEY);
+  }
+}
+
+function updateTargetItemSelect() {
+  const selected = getSelectedCase();
+  if (!selected || !elements.targetItemSelect) return;
+
+  const groups = getCaseGroups(selected);
+  const allItems = [];
+  groups.forEach(group => {
+    if (group.items) {
+      group.items.forEach(item => {
+        allItems.push({
+          name: item.name,
+          rate: item.rate,
+          image: item.image,
+          rarity: item.rarity
+        });
+      });
+    }
+  });
+
+  const currentTarget = loadTargetData();
+  elements.targetItemSelect.innerHTML = '<option value="">-- 不设置目标 --</option>' +
+    allItems.map(item => {
+      const rateText = Number(item.rate || 0).toFixed(4);
+      const selected = currentTarget && currentTarget.targetName === item.name ? 'selected' : '';
+      return `<option value="${item.name}" ${selected}>${item.name} (${rateText}%)</option>`;
+    }).join('');
+}
+
+function setTarget(itemName) {
+  if (!itemName) {
+    clearTarget();
+    return;
+  }
+
+  const selected = getSelectedCase();
+  if (!selected) return;
+
+  // 查找目标物品的概率
+  const groups = getCaseGroups(selected);
+  let targetRate = 100;
+  for (const group of groups) {
+    if (group.items) {
+      const item = group.items.find(i => i.name === itemName);
+      if (item) {
+        targetRate = Number(item.rate || 100);
+        break;
+      }
+    }
+  }
+
+  const targetData = {
+    caseId: selected.id,
+    caseName: selected.name,
+    targetName: itemName,
+    targetRate: targetRate,
+    price: selected.price || 0,
+    priceType: selected.priceType || "金币",
+    count: 0,
+    achieved: false  // 是否已获得
+  };
+
+  saveTargetData(targetData);
+  renderTargetStatus(targetData);
+}
+
+function clearTarget() {
+  saveTargetData(null);
+  if (elements.targetItemSelect) elements.targetItemSelect.value = "";
+  if (elements.targetStatus) elements.targetStatus.classList.add("hidden");
+  if (elements.clearTargetBtn) elements.clearTargetBtn.classList.add("hidden");
+}
+
+function renderTargetStatus(data) {
+  if (!data || !elements.targetStatus) {
+    if (elements.targetStatus) elements.targetStatus.classList.add("hidden");
+    if (elements.clearTargetBtn) elements.clearTargetBtn.classList.add("hidden");
+    return;
+  }
+
+  elements.targetStatus.classList.remove("hidden");
+  elements.clearTargetBtn.classList.remove("hidden");
+
+  // 根据概率计算期望次数：期望次数 = 100 / 概率
+  const rate = Number(data.targetRate) || 100;
+  const expectedCount = rate > 0 ? Math.ceil(100 / rate) : 10000;
+
+  // 如果已获得
+  if (data.achieved) {
+    elements.targetCount.textContent = `${data.count} 次 (目标已获得)`;
+    elements.targetProgressBar.style.width = "100%";
+    elements.targetProgressBar.className = "h-full bg-green-500 transition-all duration-300";
+    if (elements.targetWarning) elements.targetWarning.classList.add("hidden");
+  } else {
+    elements.targetCount.textContent = `${data.count} 次`;
+
+    // 进度条：实际次数 / 期望次数，最大100%
+    const progress = Math.min(100, (data.count / expectedCount) * 100);
+    elements.targetProgressBar.style.width = `${progress}%`;
+
+    // 检查是否超出期望
+    if (data.count > expectedCount) {
+      elements.targetProgressBar.className = "h-full bg-red-500 transition-all duration-300";
+      if (elements.targetWarning) {
+        elements.targetWarning.classList.remove("hidden");
+        elements.targetWarning.textContent = `期望${expectedCount}次，已超出${data.count - expectedCount}次`;
+      }
+    } else {
+      elements.targetProgressBar.className = "h-full bg-brand-500 transition-all duration-300";
+      if (elements.targetWarning) elements.targetWarning.classList.add("hidden");
+    }
+  }
+}
+
+function checkTargetHit(results, openCount = 1) {
+  const targetData = loadTargetData();
+  if (!targetData || targetData.achieved) return false;
+
+  // 更新开箱次数（不是物品数量）
+  targetData.count += openCount;
+  saveTargetData(targetData);
+
+  // 检查是否命中目标
+  const hit = results.find(item => item.name === targetData.targetName);
+  if (hit) {
+    // 标记为已获得，但保留数据
+    targetData.achieved = true;
+    saveTargetData(targetData);
+    renderTargetStatus(targetData);
+    showTargetHitNotification(targetData, hit);
+    return true;
+  }
+
+  renderTargetStatus(targetData);
+  return false;
+}
+
+// 格式化数字（千分位）
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function showTargetHitNotification(targetData, item) {
+  const totalCost = targetData.count * (targetData.price || 0);
+  const formattedCost = formatNumber(totalCost);
+  const priceType = targetData.priceType || "金币";
+
+  const notification = document.createElement('div');
+  notification.className = 'target-hit-notification';
+  notification.innerHTML = `
+    <div class="target-hit-content">
+      <div class="target-hit-icon">🎯</div>
+      <h4 class="target-hit-title">目标达成</h4>
+      <p class="target-hit-text">经过 <strong>${targetData.count}</strong> 次开箱</p>
+      <p class="target-hit-text">成功获得 <strong class="target-hit-item">${item.name}</strong></p>
+      <div class="target-hit-cost-wrapper">
+        <p class="target-hit-cost-label">你花费了</p>
+        <p class="target-hit-cost"><strong>${formattedCost}</strong></p>
+        <p class="target-hit-cost-type">的 ${priceType}</p>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" class="btn-primary target-hit-btn">太棒了！</button>
+    </div>
+  `;
+  document.body.appendChild(notification);
 }
 
 const elements = {
@@ -257,7 +498,21 @@ const elements = {
   // 炫耀弹窗相关元素
   showoffModal: document.getElementById("showoffModal"),
   showoffItems: document.getElementById("showoffItems"),
-  showoffConfirmBtn: document.getElementById("showoffConfirmBtn")
+  showoffConfirmBtn: document.getElementById("showoffConfirmBtn"),
+  showoffTitle: document.getElementById("showoffTitle"),
+  showoffSubtitle: document.getElementById("showoffSubtitle"),
+  showoffShareBtn: document.getElementById("showoffShareBtn"),
+  // 收藏品展示墙
+  collectionWall: document.getElementById("collectionWall"),
+  collectionList: document.getElementById("collectionList"),
+  collectionCount: document.getElementById("collectionCount"),
+  // 目标挑战
+  targetItemSelect: document.getElementById("targetItemSelect"),
+  targetStatus: document.getElementById("targetStatus"),
+  targetCount: document.getElementById("targetCount"),
+  targetProgressBar: document.getElementById("targetProgressBar"),
+  targetWarning: document.getElementById("targetWarning"),
+  clearTargetBtn: document.getElementById("clearTargetBtn")
 };
 
 async function init() {
@@ -277,6 +532,8 @@ async function init() {
   initSelection();
   bindEvents();
   renderAll();
+  // 加载并显示目标状态
+  renderTargetStatus(loadTargetData());
   console.log("初始化完成");
 }
 
@@ -389,6 +646,21 @@ function bindEvents() {
   elements.clearInventoryBtn.addEventListener("click", handleClearInventory);
   elements.effectConfirmBtn.addEventListener("click", handleEffectConfirm);
   elements.showoffConfirmBtn.addEventListener("click", handleShowoffConfirm);
+
+  // 分享卡片按钮
+  if (elements.showoffShareBtn) {
+    elements.showoffShareBtn.addEventListener("click", generateShareCard);
+  }
+
+  // 目标挑战事件
+  if (elements.targetItemSelect) {
+    elements.targetItemSelect.addEventListener("change", (e) => {
+      setTarget(e.target.value);
+    });
+  }
+  if (elements.clearTargetBtn) {
+    elements.clearTargetBtn.addEventListener("click", clearTarget);
+  }
 }
 
 function getSelectedCase() {
@@ -406,6 +678,7 @@ function renderAll() {
   updateCurrentCaseInfo();
   renderRatePanel();
   renderInventory();
+  updateTargetItemSelect();
   // 渲染完成后同步左侧箱子列表与右侧概率面板的高度
   syncCaseListHeight();
 }
@@ -711,8 +984,9 @@ async function runEffectOpening(caseData, count) {
     await sleep(delay);
   }
 
-  // 存储待确认的结果
+  // 存储待确认的结果和开箱次数
   pendingResults = results;
+  pendingOpenCount = count;
 
   // 显示确定按钮
   elements.effectConfirmBtnContainer.classList.remove("hidden");
@@ -723,7 +997,9 @@ function handleEffectConfirm() {
   if (pendingResults.length === 0) return;
 
   const results = pendingResults;
+  const openCount = pendingOpenCount;
   pendingResults = [];
+  pendingOpenCount = 0;
 
   // 关闭浮窗
   hideEffectModal();
@@ -733,12 +1009,12 @@ function handleEffectConfirm() {
 
   if (rareItems.length > 0) {
     // 存储结果，等待炫耀弹窗确认后再处理
-    pendingShowoffResults = { results, rareItems };
+    pendingShowoffResults = { results, rareItems, openCount };
     showShowoffModal(rareItems);
     // 不恢复交互，等待炫耀弹窗确认
   } else {
     // 直接处理结果
-    processResults(results);
+    processResults(results, openCount);
     enableInteraction();
   }
 }
@@ -747,13 +1023,13 @@ function handleEffectConfirm() {
 function handleShowoffConfirm() {
   if (!pendingShowoffResults) return;
 
-  const { results } = pendingShowoffResults;
+  const { results, openCount } = pendingShowoffResults;
   pendingShowoffResults = null;
 
   hideShowoffModal();
 
   // 处理结果
-  processResults(results);
+  processResults(results, openCount);
   enableInteraction();
 }
 
@@ -778,26 +1054,14 @@ function runInstantOpening(caseData, count) {
 
   if (rareItems.length > 0) {
     // 存储结果，显示炫耀弹窗
-    pendingShowoffResults = { results, rareItems };
+    pendingShowoffResults = { results, rareItems, openCount: count };
     disableInteraction();
     showShowoffModal(rareItems);
     return; // 等待确认后再存入库存
   }
 
-  // 原有流程：直接存入库存
-  addToInventory(results);
-  const saved = saveInventory();
-
-  if (!saved) {
-    elements.inventoryFullError.classList.remove("hidden");
-    removeFromInventory(results);
-    return;
-  }
-
-  renderLatestResults(results);
-  renderInventory();
-  elements.openBtn.classList.add("open-pulse");
-  window.setTimeout(() => elements.openBtn.classList.remove("open-pulse"), 260);
+  // 无稀有物品：直接处理结果（包含目标挑战计数更新）
+  processResults(results, count);
 }
 
 // 添加结果到库存
@@ -812,6 +1076,7 @@ function addToInventory(results) {
         name: item.name,
         type: item.type || "",
         rarity: item.rarity,
+        rate: item.rate, // 保存概率信息
         image: item.image,
         totalQuantity: quantity
       });
@@ -870,6 +1135,7 @@ function renderInventory() {
     elements.inventoryCount.textContent = "总计 0 种，0 件";
     elements.inventoryList.innerHTML =
       '<p class="text-sm text-slate-400">库存为空，快去开箱试试手气吧。</p>';
+    renderCollectionWall(); // 更新收藏品展示墙
     return;
   }
 
@@ -883,6 +1149,41 @@ function renderInventory() {
     const card = createItemCard(item, true, true);
     elements.inventoryList.appendChild(card);
   });
+
+  renderCollectionWall(); // 更新收藏品展示墙
+}
+
+// 渲染收藏品展示墙
+function renderCollectionWall() {
+  if (!elements.collectionWall || !elements.collectionList) return;
+
+  // 从库存中筛选极稀有物品（需要在库存中存储rate信息）
+  const collectionItems = [];
+
+  state.inventory.forEach((item, key) => {
+    // 检查是否为极稀有物品（通过rarity判断或存储的rate）
+    if (item.rarity === "legendary" || (item.rate && Number(item.rate) <= RARE_THRESHOLD)) {
+      collectionItems.push({ ...item, key });
+    }
+  });
+
+  if (collectionItems.length === 0) {
+    elements.collectionWall.classList.add("hidden");
+    return;
+  }
+
+  elements.collectionWall.classList.remove("hidden");
+  elements.collectionCount.textContent = `${collectionItems.length} 种极稀有物品`;
+
+  elements.collectionList.innerHTML = collectionItems.map(item => `
+    <div class="collection-item">
+      <img class="collection-item-image" src="${item.image || "assets/items/default.jpg"}" alt="${item.name}">
+      <div class="collection-item-info">
+        <div class="collection-item-name">${item.name}</div>
+        <div class="collection-item-quantity">x${item.totalQuantity}</div>
+      </div>
+    </div>
+  `).join("");
 }
 
 function createItemCard(item, showCount = false, isInventory = false) {

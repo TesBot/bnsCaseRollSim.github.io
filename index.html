@@ -53,6 +53,9 @@
       referrerpolicy="no-referrer"
     />
 
+    <!-- html2canvas for screenshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body class="bg-brand-900 text-slate-100 min-h-screen">
@@ -72,7 +75,17 @@
         </div>
         <ul class="hidden gap-6 text-sm text-slate-300 md:flex">
           <li><a class="nav-link" href="#inventory">我的库存</a></li>
+          <li>
+            <a class="nav-link flex items-center gap-2" href="https://github.com/TesBot/bnsCaseRollSim.github.io" target="_blank" rel="noopener noreferrer">
+              <img class="w-5 h-5 rounded-full border border-slate-600 hover:border-brand-400 transition" src="https://avatars.githubusercontent.com/u/23382251?v=4" alt="作者头像">
+              <span>幸运鸡</span>
+            </a>
+          </li>
         </ul>
+        <!-- 手机端显示头像 -->
+        <a class="md:hidden flex items-center" href="https://github.com/TesBot/bnsCaseRollSim.github.io" target="_blank" rel="noopener noreferrer">
+          <img class="w-6 h-6 rounded-full border border-slate-600" src="https://avatars.githubusercontent.com/u/23382251?v=4" alt="作者头像">
+        </a>
       </nav>
     </header>
 
@@ -142,6 +155,32 @@
             </div>
           </div>
 
+          <!-- 目标挑战 -->
+          <div class="mt-4 p-3 rounded-lg border border-brand-500/30 bg-brand-800/30">
+            <h3 class="text-sm font-semibold text-brand-400 mb-2">
+              <i class="fa-solid fa-bullseye mr-1"></i>目标挑战
+            </h3>
+            <label class="block mb-2">
+              <span class="text-xs text-slate-400">选择目标物品</span>
+              <select id="targetItemSelect" class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-xs outline-none transition focus:border-brand-400">
+                <option value="">-- 不设置目标 --</option>
+              </select>
+            </label>
+            <div id="targetStatus" class="hidden">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">已开箱:</span>
+                <span id="targetCount" class="text-brand-400 font-bold">0 次</span>
+              </div>
+              <div id="targetProgress" class="mt-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div id="targetProgressBar" class="h-full bg-brand-500 transition-all duration-300" style="width: 0%"></div>
+              </div>
+              <p id="targetWarning" class="mt-1 text-xs text-red-400 hidden"></p>
+            </div>
+            <button id="clearTargetBtn" class="mt-2 w-full text-xs text-slate-500 hover:text-slate-300 transition hidden">
+              <i class="fa-solid fa-times mr-1"></i>取消目标
+            </button>
+          </div>
+
           <div class="mt-5">
             <h3 class="mb-2 text-sm text-slate-400">本次开箱结果</h3>
             <div id="latestResults" class="result-grid"></div>
@@ -155,7 +194,19 @@
           </h2>
           <p id="ratesCaseName" class="mb-3 text-xs text-slate-400"></p>
           <div id="rates" class="space-y-2 text-sm"></div>
-        </aside>
+
+          </aside>
+      </section>
+
+      <!-- 收藏品展示墙 -->
+      <section id="collectionWall" class="card-panel mt-6 hidden">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <h2 class="text-lg font-bold">
+            <i class="fa-solid fa-crown mr-2 text-yellow-400"></i>出货展示
+          </h2>
+          <span id="collectionCount" class="text-sm text-yellow-400">0 种极稀有物品</span>
+        </div>
+        <div id="collectionList" class="collection-scroll"></div>
       </section>
 
       <!-- 库存 -->
@@ -175,6 +226,10 @@
         <p>© 2026 剑灵开箱模拟器 - 抽奖结果仅供娱乐。</p>
         <p class="mt-1">
           本网页为练习项目，不涉及实际交易，不代表任何官方平台，若涉及素材请替换为自有资源。
+        </p>
+        <p class="mt-3 text-sm text-slate-300">
+          <i class="fa-solid fa-comment-dots mr-1 text-brand-400"></i>
+          有问题或建议？欢迎在 GitHub 提 Issue 或 PR
         </p>
         <p class="mt-2">
           <a href="https://github.com/TesBot/bnsCaseRollSim.github.io" target="_blank" rel="noopener noreferrer" class="text-brand-400 hover:text-brand-500 transition">
@@ -224,6 +279,9 @@
     <div id="showoffModal" class="showoff-modal hidden">
       <div class="showoff-overlay"></div>
       <div class="showoff-content">
+        <button id="showoffShareBtn" class="showoff-share-icon" title="生成分享卡片">
+          <i class="fa-solid fa-share-from-square"></i>
+        </button>
         <div class="showoff-stars">
           <div class="showoff-star star-1"></div>
           <div class="showoff-star star-2"></div>
@@ -232,10 +290,10 @@
           <div class="showoff-star star-5"></div>
           <div class="showoff-star star-6"></div>
         </div>
-        <h3 class="showoff-title">极稀有物品!</h3>
-        <p class="showoff-subtitle">恭喜获得以下珍稀奖励</p>
+        <h3 id="showoffTitle" class="showoff-title">极稀有物品!</h3>
+        <p id="showoffSubtitle" class="showoff-subtitle">恭喜获得以下珍稀奖励</p>
         <div id="showoffItems" class="showoff-items"></div>
-        <button id="showoffConfirmBtn" class="btn-primary">
+        <button id="showoffConfirmBtn" class="btn-primary showoff-confirm-btn">
           <i class="fa-solid fa-check mr-2"></i>确定
         </button>
       </div>
