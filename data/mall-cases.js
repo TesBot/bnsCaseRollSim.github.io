@@ -4,6 +4,8 @@ window.MALL_CASES = [
     category: "mall",
     name: "神兽飞翼箱",
     desc: "飞吧...入梦的时刻",
+    price: 1080,
+    priceType: "神石",
     image: "assets/shenshoufeiyixiang/shenshoufeiyixiang.png",
     itemGroups: [
       {
@@ -80,6 +82,8 @@ window.MALL_CASES = [
     category: "mall",
     name: "神兽朋克箱",
     desc: "梦想终会燃尽...",
+    price: 1080,
+    priceType: "神石",
     image: "assets/shenshoupengkexiang/shenshoupengkexiang.png",
     itemGroups: [
       {
@@ -156,6 +160,8 @@ window.MALL_CASES = [
     category: "mall",
     name: "龙吟仙境吉运福签",
     desc: "飞龙工商",
+    price: 1000,
+    priceType: "神兽在星空的一瞬",
     image: "assets/longyinxianjingjiyunfuqian/longyinxianjingjiyunfuqian.png",
     itemGroups: [
       {
