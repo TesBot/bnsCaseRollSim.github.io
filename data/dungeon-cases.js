@@ -302,5 +302,46 @@ window.DUNGEON_CASES = [
         ]
       }
     ]
+  },
+  {
+    id: "dungeon_relic_06",
+    category: "dungeon",
+    name: "黄金极限挑战武功秘典箱",
+    desc: "鸿运商城",
+    image: "assets/jiwugong/huangjinjixiantiaozhanjiwugong.jpg",
+    itemGroups: [
+      {
+        code: "秘典",
+        name: " ",
+        rule: "概率获得",
+        drawMode: "one",
+        allowEmpty: false,
+        items: [
+          { id: "A1", name: "[刺客][洪门2式][耳环专用]上乘武功秘典[雷电斩：极]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/cike.png"},
+          { id: "A2", name: "[刺客][洪门2式][耳环专用]上乘武功秘典[雷电斩：极广]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/cike.png"},
+          { id: "A3", name: "[刺客][洪门3式][耳环专用]上乘武功秘典[影法：极]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/cike.png"},
+          { id: "A4", name: "[剑士][洪门1式][手镯专用]上乘武功秘典[拔剑：极集速]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/jianshi.png"},
+          { id: "A5", name: "[剑士][洪门2式][手镯专用]上乘武功秘典[拔剑：极速]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/jianshi.png"},
+          { id: "A6", name: "[剑士][洪门3式][手镯专用]上乘武功秘典[拔剑：极雷破]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/jianshi.png"},
+          { id: "A7", name: "[力士][洪门1式][腰带专用]上乘武功秘典[天崩地裂：极加]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/lishi.png"},
+          { id: "A8", name: "[力士][洪门2式][腰带专用]上乘武功秘典[天崩地裂：极攻]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/lishi.png"},
+          { id: "A9", name: "[力士][洪门3式][腰带专用]上乘武功秘典[深渊：极体命]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/lishi.png"},
+          { id: "A10", name: "[召唤师][洪门1式][耳环专用]上乘武功秘典[牵牛花：极加]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/zhaohuan.png"},
+          { id: "A11", name: "[召唤师][洪门2式][耳环专用]上乘武功秘典[牵牛花：极迅体]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/zhaohuan.png"},
+          { id: "A12", name: "[召唤师][洪门3式][耳环专用]上乘武功秘典[牵牛花：极阳体]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/zhaohuan.png"},
+          { id: "A13", name: "[咒术师][洪门1式][戒指专用]上乘武功秘典[真言：极加]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/zhoushu.png"},
+          { id: "A14", name: "[咒术师][洪门2式][戒指专用]上乘武功秘典[式神：极]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/zhoushu.png"},
+          { id: "A15", name: "[拳师][洪门1式][手套专用]上乘武功秘典[冲拳：极集攻]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/quanshi.png"},
+          { id: "A16", name: "[拳师][洪门2式][手套专用]上乘武功秘典[冲拳：极攻加]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/quanshi.png"},
+          { id: "A17", name: "[拳师][洪门3式][手套专用]上乘武功秘典[冲拳：极减延]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/quanshi.png"},
+          { id: "A18", name: "[气功师][洪门1式][手套专用]上乘武功秘典[双龙破：极舍破]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/qigongshi.png"},
+          { id: "A19", name: "[气功师][洪门2式][手套专用]上乘武功秘典[双龙破：极广血]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/qigongshi.png"},
+          { id: "A20", name: "[气功师][洪门2式][手套专用]上乘武功秘典[双龙破：极延]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/qigongshi.png"},
+          { id: "A21", name: "[灵剑士][洪门1式][戒指专用]上乘武功秘典[断水流：极集]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/lingjianshi.png"},
+          { id: "A22", name: "[灵剑士][洪门2式][戒指专用]上乘武功秘典[断水流：极暴]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/lingjianshi.png"},
+          { id: "A23", name: "[灵剑士][洪门3式][戒指专用]上乘武功秘典[断水流：极风]", type: "秘典", quantity: "1", rarity: "rare", rate: (1/23)*100, image: "assets/jiwugong/lingjianshi.png"}
+        ]
+      }
+    ]
   }
 ];
