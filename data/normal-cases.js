@@ -1,16 +1,16 @@
 window.NORMAL_CASES = [
   {
-    id: "normal_daily_01",
-    category: "normal",
-    name: "苏向阳战利品",
-    desc: "武神塔20层",
-    image: "assets/suxiangyang/suxiangyang.png",
+    "id": "normal_daily_01",
+    "category": "normal",
+    "name": "苏向阳战利品",
+    "desc": "武神塔20层",
+    "image": "assets/suxiangyang/suxiangyang.png",
     itemGroups: [
       {
         code: "奖励",
         name: " ",
-        rule: "确定获得",
-        drawMode: "all",
+        rule: "可获得其中一种",
+        drawMode: "one",
         allowEmpty: false,
         items: [
           { id: "A1", name: "[仙幻]武神塔专票", type: "奖励道具", quantity: "1", rarity: "rare", rate: 100, image: "assets/suxiangyang/A1.png" },
@@ -25,19 +25,19 @@ window.NORMAL_CASES = [
       {
         code: "奖励",
         name: " ",
-        rule: "概率获得",
-        drawMode: "one",
-        allowEmpty: true,
+        rule: "确定获得",
+        drawMode: "all",
+        allowEmpty: false,
         items: [
           { id: "B1", name: "传说制作委托书", type: "奖励道具", quantity: "1", rarity: "legendary", rate: 30, image: "assets/suxiangyang/B1.png" }
         ]
       },
       {
-        code: "稀有奖励",
+        code: "奖励",
         name: " ",
-        rule: "概率获得",
+        rule: "可获得其中一种",
         drawMode: "one",
-        allowEmpty: true,
+        allowEmpty: false,
         items: [
           { id: "C1", name: "破戒僧", type: "奖励道具", quantity: "1", rarity: "epic", rate: 10, image: "assets/suxiangyang/C1.png" },
           { id: "C2", name: "狮子装", type: "奖励道具", quantity: "1", rarity: "epic", rate: 10, image: "assets/suxiangyang/C2.png" },
@@ -48,17 +48,17 @@ window.NORMAL_CASES = [
     ]
   },
   {
-    id: "normal_daily_02",
-    category: "normal",
-    name: "仙幻大鱼坊成长支援箱",
-    desc: "钓鱼硬币兑换",
-    image: "assets/xianhuandayufangchengzhangzhiyuanxiang/xianhuandayufangchengzhangzhiyuanxiang.png",
+    "id": "normal_daily_02",
+    "category": "normal_expired",
+    "name": "仙幻大鱼坊成长支援箱",
+    "desc": "钓鱼硬币兑换",
+    "image": "assets/xianhuandayufangchengzhangzhiyuanxiang/xianhuandayufangchengzhangzhiyuanxiang.png",
     itemGroups: [
       {
         code: "奖励",
         name: " ",
-        rule: "确定获得",
-        drawMode: "all",
+        rule: "可获得其中一种",
+        drawMode: "one",
         allowEmpty: false,
         items: [
           { id: "A1", name: "特制牛肉盖饭", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 100, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/A1.png" },
@@ -68,21 +68,21 @@ window.NORMAL_CASES = [
       {
         code: "奖励",
         name: " ",
-        rule: "概率获得",
+        rule: "可获得其中一种",
         drawMode: "one",
-        allowEmpty: true,
+        allowEmpty: false,
         items: [
-          { id: "B1", name: "宝玉粉末(5个)", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: (1/3)*100, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/B1.png" },
-          { id: "B2", name: "武魂粉末(5个)", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: (1/3)*100, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/B2.png" },
-          { id: "B3", name: "灵木碎片(5个)", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: (1/3)*100, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/B3.png" }
+          { id: "B1", name: "宝玉粉末(5个)", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 33.33333333333333, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/B1.png" },
+          { id: "B2", name: "武魂粉末(5个)", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 33.33333333333333, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/B2.png" },
+          { id: "B3", name: "灵木碎片(5个)", type: "奖励道具", quantity: "1", rarity: "uncommon", rate: 33.33333333333333, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/B3.png" }
         ]
       },
       {
         code: "奖励",
         name: " ",
-        rule: "概率获得",
+        rule: "可获得其中一种",
         drawMode: "one",
-        allowEmpty: true,
+        allowEmpty: false,
         items: [
           { id: "C1", name: "耀眼的真言珠箱", type: "奖励道具", quantity: "1", rarity: "rare", rate: 4.5, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/C1.png" },
           { id: "C2", name: "炽热的真言珠箱", type: "奖励道具", quantity: "1", rarity: "epic", rate: 0.5, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/C2.png" },
@@ -91,11 +91,11 @@ window.NORMAL_CASES = [
         ]
       },
       {
-        code: "稀有奖励",
+        code: "奖励",
         name: " ",
-        rule: "小概率获得",
+        rule: "可获得其中一种",
         drawMode: "one",
-        allowEmpty: true,
+        allowEmpty: false,
         items: [
           { id: "D1", name: "剑灵兜帽", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D1.png" },
           { id: "D2", name: "剑灵兜帽头饰", type: "奖励道具", quantity: "1", rarity: "epic", rate: 1, image: "assets/xianhuandayufangchengzhangzhiyuanxiang/D2.png" },
